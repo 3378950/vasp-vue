@@ -10,9 +10,9 @@
 <!--        <tags-view v-if="needTagsView" />-->
       </div>
       <app-main />
-      <el-footer>
-        <el-menu class="bg-red" mode="horizontal" style="position: ">版权所有</el-menu>
-      </el-footer>
+<!--      <el-footer>-->
+<!--        <el-menu class="bg-red" mode="horizontal" style="text-align: right">联系我们：河北省农业大数据重点实验室 联系人：XXX</el-menu>-->
+<!--      </el-footer>-->
 
       <right-panel>
         <settings />
@@ -100,12 +100,14 @@ export default {
     top: 0;
     right: 0;
     z-index: 9;
-    width: calc(100% - #{$base-sidebar-width});
+    width: 100%;
+    /*width: calc(100% - #{$base-sidebar-width});*/
     transition: width 0.28s;
   }
 
   .hideSidebar .fixed-header {
-    width: calc(100% - 54px);
+    width: 100%;
+    /*width: calc(100% - 54px);*/
   }
 
   .sidebarHide .fixed-header {

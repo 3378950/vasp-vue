@@ -1,5 +1,8 @@
 import Vue from 'vue'
 
+// 引入地图
+import BaiduMap from 'vue-baidu-map'
+
 import Cookies from 'js-cookie'
 
 import Element from 'element-ui'
@@ -74,6 +77,10 @@ DictData.install()
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size
+})
+
+Vue.use(BaiduMap, {
+  ak: 'tambG09mID5LqjrXplXXzpG5Pjpgq2DH'
 })
 
 Vue.config.productionTip = false

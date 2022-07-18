@@ -1,6 +1,6 @@
 <template>
     <div>
-      村容村貌数据展示
+      固定监控摄像机
     </div>
 </template>
 

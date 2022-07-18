@@ -19,9 +19,9 @@
     height: 100%;
     position: fixed;
     font-size: 0px;
-    top: 0%;
+    top: calc(100% - calc(100% - 50px));
     bottom: 0;
-    left: 0;
+    left: 0px;
     z-index: 1001;
     overflow: hidden;
     -webkit-box-shadow: 2px 0 6px rgba(0,21,41,.35);
@@ -212,7 +212,7 @@
     overflow-y: auto;
 
     &::-webkit-scrollbar-track-piece {
-      background: #d3dce6;
+      background: #99a9bf;
     }
 
     &::-webkit-scrollbar {

@@ -1,37 +1,23 @@
 <template>
   <div class="navbar">
-    <div style="float: left;line-height: 46px; font-size: 18px; left: auto; margin-left: 20px">全域多级村容村貌大数据监管平台</div>
-    <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav"/>
-    <top-nav id="topmenu-container" class="topmenu-container" v-if="topNav"/>
-
+    <div style="float: left;line-height: 46px; font-size: 20px; left: auto; margin-left: 20px; color: white; vertical-align: middle;">全域多级村容村貌大数据监管平台</div>
+    <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" style="color: white;" @toggleClick="toggleSideBar" />
     <div class="right-menu">
-      <template v-if="device!=='mobile'">
-        <search id="header-search" class="right-menu-item" />
+<!--      <i class="el-icon-message-solid"></i>-->
+        欢迎 {{userRole}} ：{{username}}
+      <!--          <div style="color: white; font-size: 13px">-->
+      <!--            当前用户角色：-->
+      <!--            {{userRole}}-->
+      <!--          </div>-->
+      <!--          <i class="el-icon-switch-button" />-->
 
-        <el-tooltip content="源码地址" effect="dark" placement="bottom">
-          <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect" />
-        </el-tooltip>
 
-        <el-tooltip content="文档地址" effect="dark" placement="bottom">
-          <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
-
-        <el-tooltip content="布局大小" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
-        </el-tooltip>
-
-      </template>
-
-      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
+      <el-dropdown class="avatar-container right-menu-item hover-effect">
         <div class="avatar-wrapper">
-          <img :src="avatar" class="user-avatar">
+            <img :src="avatar" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
-        <el-dropdown-menu slot="dropdown">
+        <el-dropdown-menu slot="dropdown" trigger="click">
           <router-link to="/user/profile">
             <el-dropdown-item>个人中心</el-dropdown-item>
           </router-link>
@@ -57,8 +43,18 @@ import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
 import RuoYiGit from '@/components/RuoYi/Git'
 import RuoYiDoc from '@/components/RuoYi/Doc'
+import {getUserProfile} from "../../api/system/user";
 
 export default {
+  data() {
+    return {
+      userRole: "",
+      username: ""
+    };
+  },
+  created() {
+    this.getUser();
+  },
   components: {
     Breadcrumb,
     TopNav,
@@ -93,6 +89,16 @@ export default {
     }
   },
   methods: {
+    message() {
+      console.log(1234);
+    },
+    getUser() {
+      getUserProfile().then(response => {
+        this.userRole = response.data.roles[0].roleName
+        this.username = response.data.userName;
+        // console.log(response);
+      });
+    },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
@@ -113,13 +119,15 @@ export default {
 
 <style lang="scss" scoped>
 .navbar {
-  height: 55px;
+  height: 50px;
   top: 0%;
+  left: 0px;
+  width: 100%;
+  margin-right: 100%;
   overflow: hidden;
-  position: relative;
-  margin-left: 0%;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  position: absolute;
+  background: #1890ff;
+  box-shadow: 0 10px 4px rgba(0,21,41,.08);
 
   .hamburger-container {
     line-height: 46px;
@@ -152,7 +160,8 @@ export default {
     float: right;
     height: 100%;
     line-height: 50px;
-
+    vertical-align: middle;
+    color: white;
     &:focus {
       outline: none;
     }
@@ -163,7 +172,9 @@ export default {
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
-      vertical-align: text-bottom;
+      vertical-align: middle;
+
+      /*vertical-align: text-bottom;*/
 
       &.hover-effect {
         cursor: pointer;
