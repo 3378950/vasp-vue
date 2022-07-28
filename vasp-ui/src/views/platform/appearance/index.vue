@@ -2,25 +2,30 @@
     <div>
 
         <baidu-map class="map" :center="center" :zoom="11" :scroll-wheel-zoom="true">
-          <bm-boundary :name="areaName" :strokeWeight="3" strokeColor="blue" fill-color="#1890FF">
-          </bm-boundary>
+<!--          <bm-map-type :map-types="['BMAP_SATELLITE_MAP']">-->
 
+<!--          </bm-map-type>-->
+
+          <bm-boundary :name="areaName" :strokeWeight="3" strokeColor="blue" fill-color="#1890FF" :map-types="BMAP_SATELLITE_MAP">
+          </bm-boundary>
           <template v-for="point in points">
-            <bm-marker v-bind:position="{lat: point.lat, lng: point.lng}" :dragging="false" @click="openDrawer(point)" :animation="point.animation">
-            </bm-marker>
-          </template>
+              <bm-marker v-bind:position="{lat: point.lat, lng: point.lng}" :dragging="false" @click="openDrawer(point)" :animation="point.animation">
+              </bm-marker>
+            </template>
+
+
 
 
         </baidu-map>
 
 
         <el-drawer
-          title="违章情况"
+          title="河北省保定市涞水县村容村貌监测数据"
           ref="navDrawer"
           :visible.sync="table"
           :wrapper-closable=true
           direction="rtl"
-          size="30%"
+          size="34%"
           :modal=false
           style="top: calc(100% - calc(100% - 50px));"
           close="currentRow = null">
@@ -33,34 +38,132 @@
               highlight-current-row
               @current-change="handleCurrentChange"
               style="width: 100%">
+
               <el-table-column
-                type="index"
+                label="序号"
                 width="50">
+                <template slot-scope="scope">
+                  {{ scope.$index }}
+                </template>
               </el-table-column>
+
               <el-table-column
-                property="lat"
                 label="经度"
-                width="120">
+                width="100">
+                <template slot-scope="scope">
+                  {{ scope.row.lat }}
+                </template>
               </el-table-column>
+
               <el-table-column
                 property="lng"
                 label="纬度"
-                width="120">
-              </el-table-column>
-              <el-table-column
-                label="操作"
-                width="120">
-                <el-button
-                  size="mini"
-                  type="text"
-                  icon="el-icon-reading"
-                  @click="op">
-                  详情</el-button>
+                width="100">
+                <template slot-scope="scope">
+                  {{ scope.row.lng }}
+                </template>
               </el-table-column>
 
+              <el-table-column
+                property="lng"
+                label="检测目标"
+                width="90">
+                <template slot-scope="scope">
+                  乱搭乱建
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                property="lng"
+                label="检测日期"
+                width="120">
+                <template slot-scope="scope">
+                  2022-06-12
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                label="操作"
+                width="125">
+                <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    type="text"
+                    icon="el-icon-reading"
+                    @click="centerDialogVisible = true">
+<!--                    @click="clickRow(scope.$index, scope.row)"-->
+
+                    详情</el-button>
+                  <el-button
+                    size="mini"
+                    type="text"
+                    icon="el-icon-notebook-1"
+                    @click="clickRow(scope.$index, scope.row)">
+                    整改</el-button>
+                </template>
+              </el-table-column>
             </el-table>
           </el-card>
         </el-drawer>
+
+      <el-dialog
+        title="检测情况"
+        :visible.sync="centerDialogVisible"
+        width="30%"
+        center>
+<!--        <span>需要注意的是内容是默认不居中的</span>-->
+<!--        <el-card :body-style="{ padding: '0px' }">-->
+<!--          <img src="../../../assets/images/1.png" class="image">-->
+<!--          <div style="padding: 14px;">-->
+<!--            <span>好吃的汉堡</span>-->
+<!--            <span>好吃的汉堡</span>-->
+
+<!--            <div class="bottom clearfix">-->
+<!--              <time class="time">{{ currentDate }}</time>-->
+<!--              <el-button type="text" class="button">操作按钮</el-button>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </el-card>-->
+
+        <el-row>
+          <el-col :span="8">
+            <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 160px; height: 120px"></el-image>
+          </el-col>
+
+          <el-col :span="16">
+            <div style="font-size: 20px">目标：乱堆乱放</div>
+            <div style="font-size: 20px">位置：XXX村XXX</div>
+            <div style="font-size: 20px">检测日期：2022-06-12 </div>
+            <div style="font-size: 20px">是否整改：否</div>
+            <div style="font-size: 20px">数据来源：</div>
+<!--            <div style="font-size: 20px">目标：乱堆乱放</div>-->
+<!--            <div style="font-size: 20px">位置：XXX村XXX</div>-->
+<!--            <div style="font-size: 20px">检测日期：2022-06-12 </div>-->
+<!--            <div style="font-size: 20px">是否整改：否</div>-->
+<!--            <div style="font-size: 20px">数据来源：</div>-->
+          </el-col>
+        </el-row>
+
+<!--        <div class="demo-image__placeholder">-->
+<!--          <div class="block">-->
+<!--            <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 120px; height: 100px"></el-image>-->
+<!--          </div>-->
+<!--          <el-divider direction="vertical"></el-divider>-->
+
+<!--          <div class="block">-->
+<!--            <span class="demonstration">默认</span>-->
+<!--            <span class="demonstration">默认</span>-->
+<!--            <span class="demonstration">默认</span>-->
+
+<!--          </div>-->
+
+<!--        </div>-->
+
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="centerDialogVisible = false">关闭</el-button>
+          <el-button type="primary" @click="centerDialogVisible = false">整改</el-button>
+        </span>
+      </el-dialog>
 
 
     </div>
@@ -71,8 +174,9 @@
       name: "index",
       data() {
         return {
-          table: false,
+          table: true,
           areaName: "河北省保定市涞水县",
+          centerDialogVisible: false,
           center: {
             lat: 39.39404, lng: 115.71517
           },
@@ -95,30 +199,29 @@
               animation: ""
             },
           ],
-          currentRow: null
+          currentRow: null,
+          index: null
         }
       },
       created() {
       },
       methods: {
-        openDrawer(val) {
+        async openDrawer(val) {
           this.handleCurrentChange(val);
           this.table = true;
           this.currentRow = val;
           this.$refs.singleTable.setCurrentRow(val);
-
         },
         handleCurrentChange(val) {
+          const index = this.points.indexOf(val);
           this.currentRow = val;
           for(let i = 0; i < this.points.length; i++) {
             this.points[i].animation = "";
           }
-          val.animation = "BMAP_ANIMATION_BOUNCE";
+          this.points[index].animation = "BMAP_ANIMATION_BOUNCE";
         },
-        op(index) {
-
-          // console.log(this.currentRow);
-          alert(index + 1);
+        async clickRow(index, row) {
+          alert(index);
         },
       }
     }
