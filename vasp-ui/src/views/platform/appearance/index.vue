@@ -1,7 +1,7 @@
 <template>
     <div>
         <!--地图展示  -->
-        <baidu-map class="map" :center="center" :zoom="13" :scroll-wheel-zoom="true">
+        <baidu-map class="map" :center="center" :zoom="mapZoomLevel" :scroll-wheel-zoom="true">
           <bm-boundary :name="areaName" :strokeWeight="3" strokeColor="blue" fill-color="#1890FF" :map-types="BMAP_SATELLITE_MAP">
           </bm-boundary>
           <template v-for="point in points">
@@ -11,7 +11,7 @@
         </baidu-map>
 
         <!-- 抽屉表格     -->
-        <el-drawer title="河北省保定市涞水县村容村貌监测数据" ref="navDrawer" :visible.sync="showTable" :wrapper-closable=true direction="rtl" size="34%" :modal=false style="top: calc(100% - calc(100% - 50px));" close="currentRow = null">
+        <el-drawer :title="drawerTitle" ref="navDrawer" :visible.sync="showTable" :wrapper-closable=true direction="rtl" size="34%" :modal=false style="top: calc(100% - calc(100% - 50px));" close="currentRow = null">
           <el-card class="box-card">
             <el-table ref="singleTable" :data="points" highlight-current-row @current-change="handleCurrentChange" style="width: 100%">
 
@@ -91,12 +91,11 @@
       name: "index",
       data() {
         return {
+          mapZoomLevel: null,
           showTable: true,
           areaName: "",
           centerDialogVisible: false,
-          // center: {
-          //   lat: 39.39404, lng: 115.71517
-          // },
+          drawerTitle: "",
           center: null,
           points: [
             {
@@ -126,7 +125,17 @@
       methods: {
         getArea() {
           getUserProfile().then(response => {
+            // console.log(response.data);
+            const level = response.data.dept.deptName;
+            if(level == "省级部门") {
+              this.mapZoomLevel = 8;
+            } else if(level == "市级部门") {
+              this.mapZoomLevel = 10;
+            } else if(level == "县级部门") {
+              this.mapZoomLevel = 13;
+            }
             this.areaName = response.data.region;
+            this.drawerTitle = response.data.region + "村容村貌监测数据";
             const res =  jsonp('http://api.map.baidu.com/geocoding/v3/', {
               address: this.areaName,
               output: 'json',
@@ -134,10 +143,7 @@
               callback: 'showLocation'
             });
             res.then(ress => {
-              // this.center.lat = ress.result.location.lat;
-              // this.center.lng = ress.result.location.lng;
               this.center = ress.result.location;
-              // console.log(ress.result.location);
             })
           });
         },
