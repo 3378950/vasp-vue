@@ -52,6 +52,12 @@ public class LoginUser implements UserDetails
     private String loginLocation;
 
     /**
+     * 所在地区
+     */
+    private String region;
+
+
+    /**
      * 浏览器类型
      */
     private String browser;
@@ -206,6 +212,14 @@ public class LoginUser implements UserDetails
     public void setLoginLocation(String loginLocation)
     {
         this.loginLocation = loginLocation;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
     }
 
     public String getBrowser()

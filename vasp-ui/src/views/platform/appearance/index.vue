@@ -1,7 +1,7 @@
 <template>
     <div>
         <!--地图展示  -->
-        <baidu-map class="map" :center="center" :zoom="11" :scroll-wheel-zoom="true">
+        <baidu-map class="map" :center="center" :zoom="13" :scroll-wheel-zoom="true">
           <bm-boundary :name="areaName" :strokeWeight="3" strokeColor="blue" fill-color="#1890FF" :map-types="BMAP_SATELLITE_MAP">
           </bm-boundary>
           <template v-for="point in points">
@@ -85,16 +85,19 @@
 </template>
 
 <script>
+    import {getUserProfile} from "../../../api/system/user";
+    import { jsonp } from 'vue-jsonp';
     export default {
       name: "index",
       data() {
         return {
           showTable: true,
-          areaName: "河北省保定市涞水县",
+          areaName: "",
           centerDialogVisible: false,
-          center: {
-            lat: 39.39404, lng: 115.71517
-          },
+          // center: {
+          //   lat: 39.39404, lng: 115.71517
+          // },
+          center: null,
           points: [
             {
               lat: 39.39404,
@@ -118,8 +121,27 @@
         }
       },
       created() {
+        this.getArea();
       },
       methods: {
+        getArea() {
+          getUserProfile().then(response => {
+            this.areaName = response.data.region;
+            const res =  jsonp('http://api.map.baidu.com/geocoding/v3/', {
+              address: this.areaName,
+              output: 'json',
+              ak: 'tambG09mID5LqjrXplXXzpG5Pjpgq2DH',
+              callback: 'showLocation'
+            });
+            res.then(ress => {
+              // this.center.lat = ress.result.location.lat;
+              // this.center.lng = ress.result.location.lng;
+              this.center = ress.result.location;
+              // console.log(ress.result.location);
+            })
+          });
+        },
+
         async openDrawer(val) {
           this.handleCurrentChange(val);
           this.showTable = true;
@@ -136,7 +158,7 @@
         },
         async clickRow(index, row) {
           alert(index);
-        },
+        }
       }
     }
 

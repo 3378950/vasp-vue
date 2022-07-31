@@ -56,6 +56,9 @@ public class SysUser extends BaseEntity
     /** 密码 */
     private String password;
 
+    /** 所在地区 */
+    private String region;
+
     /** 帐号状态（0正常 1停用） */
     @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用")
     private String status;
@@ -208,6 +211,14 @@ public class SysUser extends BaseEntity
         this.password = password;
     }
 
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
     public String getStatus()
     {
         return status;
@@ -310,6 +321,7 @@ public class SysUser extends BaseEntity
             .append("sex", getSex())
             .append("avatar", getAvatar())
             .append("password", getPassword())
+            .append("region", getRegion())
             .append("status", getStatus())
             .append("delFlag", getDelFlag())
             .append("loginIp", getLoginIp())
