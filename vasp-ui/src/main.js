@@ -43,6 +43,8 @@ import DictData from '@/components/DictData'
 
 // import * as VueJsonp from 'vue-jsonp'
 
+import * as echarts from 'echarts';
+Vue.prototype.$echarts = echarts;
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
