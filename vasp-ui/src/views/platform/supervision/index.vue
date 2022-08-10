@@ -5,7 +5,7 @@
         <el-card>
           <div slot="header"><span>整改情况</span></div>
 
-          <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tabs v-model="activeName">
 
             <el-tab-pane label="整改中" name="first">
               <el-table
@@ -226,24 +226,15 @@
 
         </el-card>
       </el-col>
-
-
     </el-row>
 
 
 
-    <el-dialog
-      title="责令整改"
-      :visible.sync="dialogVisible"
-      width="60%"
-      :before-close="handleClose">
+    <el-dialog title="责令整改" :visible.sync="dialogVisible" width="60%">
       <detail></detail>
     </el-dialog>
 
-
-
   </div>
-
 </template>
 
 <script>
@@ -273,7 +264,7 @@
             {
               date: '2016-05-02',
               target: '乱搭乱建',
-              itemType: 'danger',
+              type: 'danger',
               address: '莲池区',
               process: '反馈未通过',
               attType: 'danger'
@@ -384,6 +375,34 @@
           ],
           activeName: 'first',
           dialogVisible: false,
+          mapdata: [
+            { name: '涞源县', value: 130 },
+            { name: '涞水县', value: 70 },
+            { name: '涿州市', value: 6 },
+            { name: '易县', value: 100 },
+            { name: '定兴县', value: 25 },
+            { name: '高碑店市', value: 60 },
+            { name: '莲池区', value: 80 },
+            { name: '雄县', value: 65 },
+            { name: '徐水区', value: 45 },
+            { name: '安新县', value: 46 },
+            { name: '蠡县', value: 48 },
+            { name: '容城县', value: 51 },
+            { name: '高阳县', value: 100 },
+            { name: '清苑县', value: 70 },
+            { name: '曲阳县', value: 60 },
+            { name: '唐县', value: 5 },
+            { name: '阜平县', value: 20 },
+            { name: '定州市', value: 61 },
+            { name: '望都县', value: 45 },
+            { name: '竞秀区', value: 97 },
+            { name: '顺平县', value: 50 },
+            { name: '清苑区', value: 40 },
+            { name: '博野县', value: 55 },
+            { name: '满城区', value: 60 },
+            { name: '安国市', value: 30 },
+
+          ]
         }
       },
       created() {
@@ -395,22 +414,16 @@
         initCharts() {
           this.$echarts.registerMap('bd', bd);
           let myChart = this.$echarts.init(this.$refs.myChart)
-
           let option = {
             backgroundColor: 'transparent',
             title: {
-              text: '示范基地数字地图',
-              left: 'center',
-              textStyle: {
-                color: '#000'
-              }
             },
             tooltip: {
               trigger: 'item'
             },
             visualMap: {
               min: 0,
-              max: 20,
+              max: 150,
               text: ['High', 'Low'],
               realtime: false,
               calculable: true,
@@ -420,13 +433,11 @@
             },
             series: [
               {
-                name: '示范基地数',
                 type: 'map',
                 map: 'bd',
                 geoIndx: 0,
                 aspectScale: 0.75,
                 showLegendSymbol: false,
-
                 label: {
                   normal: {
                     show: true
@@ -451,16 +462,6 @@
             myChart.resize()
           })
         },
-        handleClose(done) {
-          this.$confirm('确认关闭？')
-            .then(_ => {
-              done();
-            })
-            .catch(_ => {});
-        },
-        handleClick(tab, event) {
-          console.log(tab, event);
-        }
       }
     }
 </script>

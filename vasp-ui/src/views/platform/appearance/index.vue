@@ -69,11 +69,6 @@
 
 
           <el-col :span="12">
-<!--            <div style="font-size: 20px">目标：乱堆乱放</div>-->
-<!--            <div style="font-size: 20px">位置：XXX村XXX</div>-->
-<!--            <div style="font-size: 20px">检测日期：2022-06-12 </div>-->
-<!--            <div style="font-size: 20px">是否整改：否</div>-->
-<!--            <div style="font-size: 20px">数据来源：</div>-->
             <el-form ref="form" :model="form" label-width="80px">
               <el-form-item label="目标">
                 <el-tag type="danger">乱堆乱放</el-tag>
@@ -87,8 +82,6 @@
               <el-form-item label="是否整改">
                 <el-switch v-model="form.delivery"></el-switch>
               </el-form-item>
-
-
             </el-form>
           </el-col>
         </el-row>
