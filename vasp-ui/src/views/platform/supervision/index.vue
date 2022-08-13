@@ -56,7 +56,7 @@
                 </el-table-column>
                 <el-table-column
                   label="详情"
-                  width="120">
+                  width="150">
                   <template slot-scope="scope">
                     <div slot="reference" class="name-wrapper">
                       {{ scope.row.process }}
@@ -65,7 +65,14 @@
                 </el-table-column>
                 <el-table-column label="操作">
                   <template slot-scope="scope">
-                    <el-button type="text" @click="dialogVisible = true"><i class="el-icon-view el-icon--right"></i>查看</el-button>
+                    <el-col :span="1.5">
+                      <el-button type="text" @click="rectifyVisible = true" v-if="scope.row.process == '未责令整改'">
+                        <i class="el-icon-s-release el-icon--right"></i>整改
+                      </el-button>
+                    </el-col>
+                    <el-col :span="1.5">
+                      <el-button type="text" @click="detailVisible = true"><i class="el-icon-view el-icon--right"></i>查看</el-button>
+                    </el-col>
                   </template>
                 </el-table-column>
               </el-table>
@@ -125,7 +132,7 @@
                 </el-table-column>
                 <el-table-column
                   label="详情"
-                  width="120">
+                  width="150">
                   <template slot-scope="scope">
                     <div slot="reference" class="name-wrapper">
                       {{ scope.row.process }}
@@ -134,7 +141,9 @@
                 </el-table-column>
                 <el-table-column label="操作">
                   <template slot-scope="scope">
-                    <el-button type="text" @click="dialogVisible = true"><i class="el-icon-view el-icon--right"></i>查看</el-button>
+                    <el-col :span="1.5">
+                      <el-button type="text" @click="detailVisible = true"><i class="el-icon-view el-icon--right"></i>查看</el-button>
+                    </el-col>
                   </template>
                 </el-table-column>
               </el-table>
@@ -229,9 +238,46 @@
     </el-row>
 
 
+    <!--  整改详情-->
+    <el-dialog title="整改详情" :visible.sync="detailVisible" width="60%">
+      <el-timeline>
+        <el-timeline-item :timestamp="'2022-04-12' + ' ' + '发现违章点'" placement="top" size="large" icon="el-icon-warning" type="warning">
+          <el-card>
+            <el-row>
+              <el-col :span="8">
+                <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 270px; height: 210px"></el-image>
+              </el-col>
+              <el-col :span="16">
+                <el-descriptions title="违规情况" direction="vertical" :column="4" border>
+                  <el-descriptions-item label="序号">075589</el-descriptions-item>
+                  <el-descriptions-item label="经纬度">{102.55, 78.55}</el-descriptions-item>
+                  <el-descriptions-item label="所属地区" :span="2">五尧乡</el-descriptions-item>
+                  <el-descriptions-item label="检测目标">
+                    <el-tag size="small" type="warning">乱堆乱放</el-tag>
+                  </el-descriptions-item>
+                  <el-descriptions-item label="详细地址">河北省保定市五尧乡xx</el-descriptions-item>
+                </el-descriptions>
+              </el-col>
+            </el-row>
+          </el-card>
+        </el-timeline-item>
 
-    <el-dialog title="责令整改" :visible.sync="dialogVisible" width="60%">
-      <detail></detail>
+        <el-timeline-item v-for="(activity, index) in activities"
+                          :timestamp="activity.timestamp + ' ' + activity.content"
+                          placement="top"
+                          :size="activity.size"
+                          :icon="activity.icon"
+                          :type="activity.type"
+                          :key="index">
+          <el-card>
+          </el-card>
+        </el-timeline-item>
+      </el-timeline>
+    </el-dialog>
+
+    <!-- 发布整改通知-->
+    <el-dialog title="责令整改" :visible.sync="rectifyVisible" width="60%">
+
     </el-dialog>
 
   </div>
@@ -239,9 +285,7 @@
 
 <script>
   import bd from '../../../assets/geo/bd.json';
-  import Detail from "./detail";
     export default {
-      components: {Detail},
       data() {
         return {
           tableData: [
@@ -374,7 +418,8 @@
             }
           ],
           activeName: 'first',
-          dialogVisible: false,
+          rectifyVisible: false,
+          detailVisible: false,
           mapdata: [
             { name: '涞源县', value: 130 },
             { name: '涞水县', value: 70 },
@@ -402,7 +447,42 @@
             { name: '满城区', value: 60 },
             { name: '安国市', value: 30 },
 
-          ]
+          ],
+          activities: [
+            {
+              content: '责令整改通知',
+              timestamp: '2022-05-03 8:03',
+              size: 'large',
+              icon: 'el-icon-s-release',
+              type: 'danger',
+              detail: '',
+            },
+            {
+              content: '整改情况反馈',
+              timestamp: '2022-05-15 9:26',
+              size: 'large',
+              type: 'warning',
+              icon: 'el-icon-s-check',
+              detail: '',
+            },
+            {
+              content: '反馈情况通过',
+              timestamp: '2022-06-01 8:16',
+              size: 'large',
+              type: 'success',
+              icon: 'el-icon-s-claim',
+              detail: '',
+            }],
+          form: {
+            name: '',
+            region: '',
+            date1: '2022-06-12',
+            date2: '',
+            delivery: false,
+            type: [],
+            resource: '',
+            desc: 'XXX村XXX'
+          }
         }
       },
       created() {
