@@ -2,7 +2,7 @@
     <div>
         <!--地图展示  -->
         <baidu-map class="map" :center="center" :zoom="mapZoomLevel" :scroll-wheel-zoom="true">
-          <bm-boundary :name="areaName" :strokeWeight="3" strokeColor="blue" fill-color="#1890FF" :map-types="BMAP_SATELLITE_MAP">
+          <bm-boundary :name="areaName" :strokeWeight="3" strokeColor="blue" fill-color="#1890FF" map-types="BMAP_SATELLITE_MAP">
           </bm-boundary>
           <template v-for="point in points">
               <bm-marker v-bind:position="{lat: point.lat, lng: point.lng}" :dragging="false" @click="openDrawer(point)" :animation="point.animation">
@@ -35,13 +35,13 @@
 
               <el-table-column property="lng" label="检测目标" width="90">
                 <template slot-scope="scope">
-                  乱搭乱建
+                  {{ scope.row.target }}
                 </template>
               </el-table-column>
 
               <el-table-column property="lng" label="检测日期" width="120">
                 <template slot-scope="scope">
-                  2022-06-12
+                  {{ scope.row.testTime }}
                 </template>
               </el-table-column>
 
@@ -65,8 +65,6 @@
           <el-col :span="12">
             <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 250px; height: 220px"></el-image>
           </el-col>
-
-
 
           <el-col :span="12">
             <el-form ref="form" :model="form" label-width="80px">
@@ -97,6 +95,8 @@
 
 <script>
     import {getUserProfile} from "../../../api/system/user";
+    import { listMark } from "@/api/platform/mark";
+
     import { jsonp } from 'vue-jsonp';
     export default {
       name: "index",
@@ -108,25 +108,18 @@
           centerDialogVisible: false,
           drawerTitle: "",
           center: null,
-          points: [
-            {
-              lat: 39.39404,
-              lng: 115.71517,
-              animation: ""
-            },
-            {
-
-              lat: 39.670073,
-              lng: 115.394534,
-              animation: ""
-            },
-            {
-
-              lat: 39.442261,
-              lng: 115.704054,
-              animation: ""
-            },
-          ],
+          points: null,
+          queryParams: {
+            pageNum: 1,
+            pageSize: 10,
+            lat: null,
+            lng: null,
+            region: null,
+            target: null,
+            address: null,
+            testTime: null
+          },
+          total: null,
           currentRow: null,
           form: {
             name: '',
@@ -142,10 +135,12 @@
       },
       created() {
         this.getArea();
+        this.getMarkList();
       },
       methods: {
         getArea() {
           getUserProfile().then(response => {
+            console.log(response.data);
             const level = response.data.dept.deptName;
             if(level == "省级部门") {
               this.mapZoomLevel = 8;
@@ -165,6 +160,16 @@
             res.then(ress => {
               this.center = ress.result.location;
             })
+          });
+        },
+        getMarkList() {
+          listMark(this.queryParams).then(response => {
+            this.points = response.rows;
+            this.total = response.total;
+            for(let i = 0; i < this.total; i++) {
+              this.points[i].animation = "";
+            }
+            console.log(this.points);
           });
         },
         async openDrawer(val) {

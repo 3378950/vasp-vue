@@ -185,6 +185,13 @@
                 <version>${vasp.version}</version>
             </dependency>
 
+            <!-- 系统模块-->
+            <dependency>
+                <groupId>cn.hebau.ai.vasp</groupId>
+                <artifactId>vasp-platform</artifactId>
+                <version>${vasp.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -195,7 +202,6 @@
         <module>vasp-quartz</module>
         <module>vasp-generator</module>
         <module>vasp-common</module>
-        <module>vasp-platform</module>
         <module>vasp-platform</module>
     </modules>
     <packaging>pom</packaging>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hebau.ai.vasp.platform.mapper.MarkMapper">
+    
+    <resultMap type="Mark" id="MarkResult">
+        <result property="markId"    column="mark_id"    />
+        <result property="lat"    column="lat"    />
+        <result property="lng"    column="lng"    />
+        <result property="region"    column="region"    />
+        <result property="target"    column="target"    />
+        <result property="address"    column="address"    />
+        <result property="testTime"    column="test_time"    />
+        <result property="animation"    column="animation"    />
+
+    </resultMap>
+
+    <resultMap id="MarkActivityResult" type="Mark" extends="MarkResult">
+        <collection property="activityList" notNullColumn="sub_activity_id" javaType="java.util.List" resultMap="ActivityResult" />
+    </resultMap>
+
+    <resultMap type="Activity" id="ActivityResult">
+        <result property="activityId"    column="sub_activity_id"    />
+        <result property="name"    column="sub_name"    />
+        <result property="markId"    column="sub_mark_id"    />
+        <result property="detail"    column="sub_detail"    />
+        <result property="process"    column="sub_process"    />
+        <result property="createTime"    column="sub_create_time"    />
+    </resultMap>
+
+    <sql id="selectMarkVo">
+        select mark_id, lat, lng, region, target, address, test_time from plt_mark
+    </sql>
+
+    <select id="selectMarkList" parameterType="Mark" resultMap="MarkResult">
+        <include refid="selectMarkVo"/>
+        <where>  
+            <if test="lat != null "> and lat = #{lat}</if>
+            <if test="lng != null "> and lng = #{lng}</if>
+            <if test="region != null  and region != ''"> and region = #{region}</if>
+            <if test="target != null  and target != ''"> and target = #{target}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="testTime != null "> and test_time = #{testTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectMarkByMarkId" parameterType="Long" resultMap="MarkActivityResult">
+        select a.mark_id, a.lat, a.lng, a.region, a.target, a.address, a.test_time,
+ b.activity_id as sub_activity_id, b.name as sub_name, b.mark_id as sub_mark_id, b.detail as sub_detail, b.process as sub_process, b.create_time as sub_create_time
+        from plt_mark a
+        left join plt_activity b on b.mark_id = a.mark_id
+        where a.mark_id = #{markId}
+    </select>
+        
+    <insert id="insertMark" parameterType="Mark" useGeneratedKeys="true" keyProperty="markId">
+        insert into plt_mark
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="lat != null">lat,</if>
+            <if test="lng != null">lng,</if>
+            <if test="region != null and region != ''">region,</if>
+            <if test="target != null and target != ''">target,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="testTime != null">test_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="lat != null">#{lat},</if>
+            <if test="lng != null">#{lng},</if>
+            <if test="region != null and region != ''">#{region},</if>
+            <if test="target != null and target != ''">#{target},</if>
+            <if test="address != null and address != ''">#{address},</if>
+            <if test="testTime != null">#{testTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMark" parameterType="Mark">
+        update plt_mark
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="lat != null">lat = #{lat},</if>
+            <if test="lng != null">lng = #{lng},</if>
+            <if test="region != null and region != ''">region = #{region},</if>
+            <if test="target != null and target != ''">target = #{target},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="testTime != null">test_time = #{testTime},</if>
+        </trim>
+        where mark_id = #{markId}
+    </update>
+
+    <delete id="deleteMarkByMarkId" parameterType="Long">
+        delete from plt_mark where mark_id = #{markId}
+    </delete>
+
+    <delete id="deleteMarkByMarkIds" parameterType="String">
+        delete from plt_mark where mark_id in 
+        <foreach item="markId" collection="array" open="(" separator="," close=")">
+            #{markId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteActivityByMarkIds" parameterType="String">
+        delete from plt_activity where mark_id in 
+        <foreach item="markId" collection="array" open="(" separator="," close=")">
+            #{markId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteActivityByMarkId" parameterType="Long">
+        delete from plt_activity where mark_id = #{markId}
+    </delete>
+
+    <insert id="batchActivity">
+        insert into plt_activity( activity_id, name, mark_id, detail, process, create_time) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.activityId}, #{item.name}, #{item.markId}, #{item.detail}, #{item.process}, #{item.createTime})
+        </foreach>
+    </insert>
+</mapper>

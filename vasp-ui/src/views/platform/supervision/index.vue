@@ -163,28 +163,26 @@
       <el-col :span="6" class="card-box">
 
 
-        <el-card :body-style="{height: '120px'}">
+        <el-card>
+
           <div slot="header"><span>办件箱</span></div>
+
           <el-col :span="8">
             <el-card class="box-card">
-                <div>待办</div>
+                <div>待处理</div>
                 <span class="number">3</span> <span class="unit">件</span>
                 <el-button type="text">立即处理></el-button>
             </el-card>
           </el-col>
 
-
-
           <el-col :span="8">
 
             <el-card class="box-card">
               <div style="color: #1890ff">
-                <div>已办</div>
+                <div>已处理</div>
                 <span class="number">12</span> <span class="unit">件</span>
-                <el-button type="text">立即处理></el-button>
+                <el-button type="text">查看></el-button>
               </div>
-
-
             </el-card>
 
           </el-col>
@@ -192,39 +190,68 @@
           <el-col :span="8">
             <el-card class="box-card">
               <div style="color: orangered;">
-                <div>逾期</div>
+                <div>未通过</div>
                 <span class="number">5</span> <span class="unit">件</span>
                 <el-button type="text">立即处理></el-button>
               </div>
             </el-card>
           </el-col>
+
         </el-card>
 
       </el-col>
-      <el-col :span="6" class="card-box">
-        <el-card :body-style="{height: '120px'}">
-          <div slot="header"><span>公示公告</span></div>
-          <el-row>
-            <el-col :span="2"><i class="el-icon-bell"></i></el-col>
-            <el-col :span="16">关于做好全镇农村人居环境村容...</el-col>
-            <el-col :span="6">2016-05-02</el-col>
-          </el-row>
 
-          <el-row>
-            <el-col :span="2"><i class="el-icon-bell"></i></el-col>
-            <el-col :span="16">关于做好全镇农村人居环境村容...</el-col>
-            <el-col :span="6">2016-05-02</el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="2"><i class="el-icon-bell"></i></el-col>
-            <el-col :span="16">关于做好全镇农村人居环境村容...</el-col>
-            <el-col :span="6">2016-05-02</el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="2"><i class="el-icon-bell"></i></el-col>
-            <el-col :span="16">关于做好全镇农村人居环境村容...</el-col>
-            <el-col :span="6">2016-05-02</el-col>
-          </el-row>
+      <el-col :span="6" class="card-box">
+        <el-card>
+          <div slot="header"><span>公示公告</span></div>
+<!--          <el-row>-->
+<!--            <el-col :span="2"><i class="el-icon-bell"></i></el-col>-->
+<!--            <el-col :span="16">关于做好全镇农村人居环境村容...</el-col>-->
+<!--            <el-col :span="6">2016-05-02</el-col>-->
+<!--          </el-row>-->
+
+<!--          <el-row>-->
+<!--            <el-col :span="2"><i class="el-icon-bell"></i></el-col>-->
+<!--            <el-col :span="16">关于做好全镇农村人居环境村容...</el-col>-->
+<!--            <el-col :span="6">2016-05-02</el-col>-->
+<!--          </el-row>-->
+<!--          <el-row>-->
+<!--            <el-col :span="2"><i class="el-icon-bell"></i></el-col>-->
+<!--            <el-col :span="16">关于做好全镇农村人居环境村容...</el-col>-->
+<!--            <el-col :span="6">2016-05-02</el-col>-->
+<!--          </el-row>-->
+<!--          <el-row>-->
+<!--            <el-col :span="2"><i class="el-icon-bell"></i></el-col>-->
+<!--            <el-col :span="16">关于做好全镇农村人居环境村容...</el-col>-->
+<!--            <el-col :span="6">2016-05-02</el-col>-->
+<!--          </el-row>-->
+          <el-table
+            :data="notice"
+            height="141px"
+            :show-header="false"
+            size="mini"
+          >
+            <el-table-column
+              label="标题"
+              width="230">
+              <template slot-scope="scope">
+                <i class="el-icon-bell"></i>
+                <span style="margin-left: 10px">{{ scope.row.title }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="发布时间"
+              width="90">
+              <template slot-scope="scope">
+                <div slot="reference" class="name-wrapper">
+                  {{ scope.row.time }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+
+            </el-table-column>
+          </el-table>
         </el-card>
       </el-col>
 
@@ -482,7 +509,25 @@
             type: [],
             resource: '',
             desc: 'XXX村XXX'
-          }
+          },
+          notice: [
+            {
+              title: '关于做好全镇农村人居环境村容',
+              time: '2016-05-02',
+            },
+            {
+              title: '关于做好全镇农村人居环境村容',
+              time: '2016-05-02',
+            },
+            {
+              title: '关于做好全镇农村人居环境村容',
+              time: '2016-05-02',
+            },
+            {
+              title: '关于做好全镇农村人居环境村容',
+              time: '2016-05-02',
+            }
+          ]
         }
       },
       created() {
@@ -552,6 +597,7 @@
     width: 100px;
     margin-bottom: 10px;
     border-radius: 10px;
+    height: 100%;
     border: 1px solid #dddfe3;
     text-align: center;
     line-height: 2;
@@ -563,9 +609,9 @@
   .unit {
     font-size: 13px;
   }
-  .el-pagination{
+  .el-pagination {
     text-align:center;
-    margin-top:20px;
+    margin-top:25px;
   }
 
 </style>

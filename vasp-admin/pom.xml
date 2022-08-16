@@ -61,6 +61,12 @@
             <artifactId>vasp-generator</artifactId>
         </dependency>
 
+        <!-- 代码生成-->
+        <dependency>
+            <groupId>cn.hebau.ai.vasp</groupId>
+            <artifactId>vasp-platform</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
