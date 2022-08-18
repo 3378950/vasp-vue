@@ -32,6 +32,12 @@ public class ActivityServiceImpl implements IActivityService
         return activityMapper.selectActivityByActivityId(activityId);
     }
 
+    @Override
+    public List<Activity> selectActivityByMarkId(Long markId) {
+        return activityMapper.selectActivityByMarkId(markId);
+    }
+
+
     /**
      * 查询整改动态列表
      * 

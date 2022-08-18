@@ -7,15 +7,16 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * 整改动态对象 plt_activity
- * 
+ *
  * @author zcs
- * @date 2022-08-16
+ * @date 2022-08-18
  */
 public class Activity extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 动态编号 */
+    @Excel(name = "动态编号")
     private Long activityId;
 
     /** 动态名称 */
@@ -30,52 +31,52 @@ public class Activity extends BaseEntity
     @Excel(name = "详情")
     private String detail;
 
-    /** 进程 */
-    @Excel(name = "进程")
+    /** 整改进程 */
+    @Excel(name = "整改进程")
     private String process;
 
-    public void setActivityId(Long activityId) 
+    public void setActivityId(Long activityId)
     {
         this.activityId = activityId;
     }
 
-    public Long getActivityId() 
+    public Long getActivityId()
     {
         return activityId;
     }
-    public void setName(String name) 
+    public void setName(String name)
     {
         this.name = name;
     }
 
-    public String getName() 
+    public String getName()
     {
         return name;
     }
-    public void setMarkId(Long markId) 
+    public void setMarkId(Long markId)
     {
         this.markId = markId;
     }
 
-    public Long getMarkId() 
+    public Long getMarkId()
     {
         return markId;
     }
-    public void setDetail(String detail) 
+    public void setDetail(String detail)
     {
         this.detail = detail;
     }
 
-    public String getDetail() 
+    public String getDetail()
     {
         return detail;
     }
-    public void setProcess(String process) 
+    public void setProcess(String process)
     {
         this.process = process;
     }
 
-    public String getProcess() 
+    public String getProcess()
     {
         return process;
     }
@@ -83,12 +84,12 @@ public class Activity extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-            .append("activityId", getActivityId())
-            .append("name", getName())
-            .append("markId", getMarkId())
-            .append("detail", getDetail())
-            .append("process", getProcess())
-            .append("createTime", getCreateTime())
-            .toString();
+                .append("activityId", getActivityId())
+                .append("name", getName())
+                .append("markId", getMarkId())
+                .append("detail", getDetail())
+                .append("process", getProcess())
+                .append("createTime", getCreateTime())
+                .toString();
     }
 }

@@ -19,6 +19,8 @@ public interface ActivityMapper
      */
     public Activity selectActivityByActivityId(Long activityId);
 
+    public List<Activity> selectActivityByMarkId(Long markId);
+
     /**
      * 查询整改动态列表
      * 

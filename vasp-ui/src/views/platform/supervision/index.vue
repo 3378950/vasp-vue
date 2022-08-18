@@ -170,7 +170,7 @@
           <el-col :span="8">
             <el-card class="box-card">
                 <div>待处理</div>
-                <span class="number">3</span> <span class="unit">件</span>
+                <span class="number">{{undo}}</span> <span class="unit">件</span>
                 <el-button type="text">立即处理></el-button>
             </el-card>
           </el-col>
@@ -272,7 +272,7 @@
           <el-card>
             <el-row>
               <el-col :span="8">
-                <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 270px; height: 210px"></el-image>
+                <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 220px; height: 200px"></el-image>
               </el-col>
               <el-col :span="16">
                 <el-descriptions title="违规情况" direction="vertical" :column="4" border>
@@ -312,6 +312,7 @@
 
 <script>
   import bd from '../../../assets/geo/bd.json';
+  import {listMark} from "../../../api/platform/mark";
     export default {
       data() {
         return {
@@ -527,13 +528,44 @@
               title: '关于做好全镇农村人居环境村容',
               time: '2016-05-02',
             }
-          ]
+          ],
+          points: null,
+          queryParams: {
+            pageNum: 1,
+            pageSize: 10,
+            markId: null,
+            lng: null,
+            lat: null,
+            region: null,
+            target: null,
+            address: null,
+            testTime: null,
+            animation: null,
+            finished: null
+          },
+          total: null,
+          detailItem: {
+            activityList: null,
+            address: '',
+            lat: '',
+            lng: '',
+            target: '',
+            region: '',
+            testTime: '',
+            markId: '',
+          },
+          undo: 0,
+          finished: null,
+          doing: null,
         }
       },
       created() {
         this.$nextTick(() => {
           this.initCharts();
         });
+
+        this.getMarkList();
+
       },
       methods: {
         initCharts() {
@@ -586,6 +618,23 @@
           window.addEventListener('resize', function () {
             myChart.resize()
           })
+        },
+        getMarkList() {
+          listMark(this.queryParams).then(response => {
+            this.points = response.rows;
+            this.total = response.total;
+            for(let i = 0; i < this.total; i++) {
+              this.points[i].process = "";
+              const subsize = this.points[i].activityList.length;
+              if(subsize == 0) {
+                this.points[i].process = "未责令整改";
+                this.undo++;
+              } else {
+                this.points[i].process = this.points[i].activityList[subsize - 1].process;
+              }
+            }
+            console.log(this.points);
+          });
         },
       }
     }

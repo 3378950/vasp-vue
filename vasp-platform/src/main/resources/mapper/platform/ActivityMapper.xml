@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.hebau.ai.vasp.platform.mapper.ActivityMapper">
-    
+
     <resultMap type="Activity" id="ActivityResult">
         <result property="activityId"    column="activity_id"    />
         <result property="name"    column="name"    />
@@ -13,17 +13,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
     </resultMap>
 
+
     <sql id="selectActivityVo">
         select activity_id, name, mark_id, detail, process, create_time from plt_activity
     </sql>
 
     <select id="selectActivityList" parameterType="Activity" resultMap="ActivityResult">
         <include refid="selectActivityVo"/>
-        <where>  
+        <where>
+            <if test="activityId != null "> and activity_id = #{activityId}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="markId != null "> and mark_id = #{markId}</if>
             <if test="detail != null  and detail != ''"> and detail = #{detail}</if>
             <if test="process != null  and process != ''"> and process = #{process}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
         </where>
     </select>
     
@@ -31,7 +34,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectActivityVo"/>
         where activity_id = #{activityId}
     </select>
-        
+
+    <select id="selectActivityByMarkId" parameterType="Long" resultMap="ActivityResult">
+        <include refid="selectActivityVo"/>
+        where mark_id = #{markId}
+    </select>
+
     <insert id="insertActivity" parameterType="Activity" useGeneratedKeys="true" keyProperty="activityId">
         insert into plt_activity
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -40,14 +48,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="detail != null">detail,</if>
             <if test="process != null">process,</if>
             <if test="createTime != null">create_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null and name != ''">#{name},</if>
             <if test="markId != null">#{markId},</if>
             <if test="detail != null">#{detail},</if>
             <if test="process != null">#{process},</if>
             <if test="createTime != null">#{createTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateActivity" parameterType="Activity">
@@ -67,7 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteActivityByActivityIds" parameterType="String">
-        delete from plt_activity where activity_id in 
+        delete from plt_activity where activity_id in
         <foreach item="activityId" collection="array" open="(" separator="," close=")">
             #{activityId}
         </foreach>

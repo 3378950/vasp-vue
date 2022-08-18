@@ -2,6 +2,9 @@ package cn.hebau.ai.vasp.web.controller.platform;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import cn.hebau.ai.vasp.platform.domain.Activity;
+import cn.hebau.ai.vasp.platform.service.IActivityService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +37,9 @@ public class MarkController extends BaseController
     @Autowired
     private IMarkService markService;
 
+    @Autowired
+    private IActivityService activityService;
+
     /**
      * 查询检测列表
      */
@@ -42,8 +48,12 @@ public class MarkController extends BaseController
     public TableDataInfo list(Mark mark)
     {
         startPage();
-        List<Mark> list = markService.selectMarkList(mark);
-        return getDataTable(list);
+        List<Mark> markList = markService.selectMarkList(mark);
+        for (Mark m : markList) {
+            List<Activity> activityList = activityService.selectActivityByMarkId(m.getMarkId());
+            m.setActivityList(activityList);
+        }
+        return getDataTable(markList);
     }
 
     /**

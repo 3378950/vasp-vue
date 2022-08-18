@@ -47,46 +47,45 @@
 
               <el-table-column label="操作" width="125">
                 <template slot-scope="scope">
-                  <el-button size="mini" type="text" icon="el-icon-reading" @click="centerDialogVisible = true">
+                  <el-button size="mini" type="text" icon="el-icon-reading" @click="detailRow(scope.$index, scope.row)">
                     详情
                   </el-button>
 
-                  <el-button size="mini" type="text" icon="el-icon-notebook-1" @click="clickRow(scope.$index, scope.row)">
+                  <el-button size="mini" type="text" icon="el-icon-notebook-1" @click="reformRow(scope.$index, scope.row)">
                     整改
                   </el-button>
                 </template>
               </el-table-column>
             </el-table>
+            <el-pagination
+              background
+              layout="prev, pager, next"
+              :total="total">
+            </el-pagination>
           </el-card>
         </el-drawer>
 
-      <el-dialog title="检测情况" :visible.sync="centerDialogVisible" width="30%" center>
+      <el-dialog title="检测情况" :visible.sync="detailDialogVisible" width="60%">
         <el-row>
-          <el-col :span="12">
-            <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 250px; height: 220px"></el-image>
+          <el-col :span="8">
+            <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 250px; height: 200px"></el-image>
           </el-col>
-
-          <el-col :span="12">
-            <el-form ref="form" :model="form" label-width="80px">
-              <el-form-item label="目标">
-                <el-tag type="danger">乱堆乱放</el-tag>
-              </el-form-item>
-              <el-form-item label="位置">
-                <el-input type="textarea" v-model="form.desc"></el-input>
-              </el-form-item>
-              <el-form-item label="检测日期">
-                  <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
-              </el-form-item>
-              <el-form-item label="是否整改">
-                <el-switch v-model="form.delivery"></el-switch>
-              </el-form-item>
-            </el-form>
+          <el-col :span="16">
+            <el-descriptions title="违规情况" direction="vertical" :column="4" border>
+              <el-descriptions-item label="序号">{{detailItem.markId}}</el-descriptions-item>
+              <el-descriptions-item label="经纬度">{ {{detailItem.lng}} , {{detailItem.lat}} }</el-descriptions-item>
+              <el-descriptions-item label="所属地区" :span="2">{{detailItem.region}}</el-descriptions-item>
+              <el-descriptions-item label="检测目标">
+                <el-tag size="small" type="warning">{{detailItem.target}}</el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item label="详细地址">{{detailItem.address}}</el-descriptions-item>
+            </el-descriptions>
           </el-col>
         </el-row>
 
         <span slot="footer" class="dialog-footer">
-          <el-button @click="centerDialogVisible = false">关闭</el-button>
-          <el-button type="primary" @click="centerDialogVisible = false">整改</el-button>
+          <el-button @click="detailDialogVisible = false">关闭</el-button>
+          <el-button type="primary" @click="openReformDialog">整改</el-button>
         </span>
       </el-dialog>
 
@@ -105,19 +104,23 @@
           mapZoomLevel: null,
           showTable: true,
           areaName: "",
-          centerDialogVisible: false,
+          detailDialogVisible: false,
+          reformDialogVisible: false,
           drawerTitle: "",
           center: null,
           points: null,
           queryParams: {
             pageNum: 1,
             pageSize: 10,
-            lat: null,
+            markId: null,
             lng: null,
+            lat: null,
             region: null,
             target: null,
             address: null,
-            testTime: null
+            testTime: null,
+            animation: null,
+            finished: null
           },
           total: null,
           currentRow: null,
@@ -130,7 +133,17 @@
             type: [],
             resource: '',
             desc: 'XXX村XXX'
-          }
+          },
+          detailItem: {
+            activityList: null,
+            address: '',
+            lat: '',
+            lng: '',
+            target: '',
+            region: '',
+            testTime: '',
+            markId: '',
+          },
         }
       },
       created() {
@@ -140,7 +153,7 @@
       methods: {
         getArea() {
           getUserProfile().then(response => {
-            console.log(response.data);
+            // console.log(response.data);
             const level = response.data.dept.deptName;
             if(level == "省级部门") {
               this.mapZoomLevel = 8;
@@ -169,7 +182,6 @@
             for(let i = 0; i < this.total; i++) {
               this.points[i].animation = "";
             }
-            console.log(this.points);
           });
         },
         async openDrawer(val) {
@@ -186,8 +198,20 @@
           }
           this.points[index].animation = "BMAP_ANIMATION_BOUNCE";
         },
-        async clickRow(index, row) {
+        // 详情
+        async detailRow(index, row) {
+          const rowData = this.points[index];
+          this.detailItem = rowData;
+          this.detailDialogVisible = true;
+          console.log(this.detailItem);
+        },
+        // 整改
+        async reformRow(index, row) {
           alert(index);
+        },
+        openReformDialog(row) {
+          this.reformDialogVisible = true;
+          alert(row);
         }
       }
     }
@@ -201,6 +225,9 @@
    /* 高度务必要定义  */
  }
 
-
+ .el-pagination {
+   text-align:center;
+   margin-top:25px;
+ }
 
 </style>
