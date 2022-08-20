@@ -52,9 +52,21 @@ public class LoginUser implements UserDetails
     private String loginLocation;
 
     /**
-     * 所在地区
+     * 省
      */
-    private String region;
+    private String province;
+
+    /**
+     * 市
+     */
+    private String city;
+
+    /**
+     * 区
+     */
+    private String district;
+
+    private int level;
 
 
     /**
@@ -214,12 +226,36 @@ public class LoginUser implements UserDetails
         this.loginLocation = loginLocation;
     }
 
-    public String getRegion() {
-        return region;
+    public String getProvince() {
+        return province;
     }
 
-    public void setRegion(String region) {
-        this.region = region;
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public String getBrowser()

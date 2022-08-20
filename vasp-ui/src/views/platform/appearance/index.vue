@@ -5,7 +5,9 @@
           <bm-boundary :name="areaName" :strokeWeight="3" strokeColor="blue" fill-color="#1890FF" map-types="BMAP_SATELLITE_MAP">
           </bm-boundary>
           <template v-for="point in points">
-              <bm-marker v-bind:position="{lat: point.lat, lng: point.lng}" :dragging="false" @click="openDrawer(point)" :animation="point.animation">
+              <bm-marker v-bind:position="{lat: point.lat, lng: point.lng}"
+                         :dragging="false" @click="openDrawer(point)"
+                         :animation="point.animation">
               </bm-marker>
           </template>
         </baidu-map>
@@ -14,48 +16,48 @@
         <el-drawer :title="drawerTitle" ref="navDrawer" :visible.sync="showTable" :wrapper-closable=true direction="rtl" size="34%" :modal=false style="top: calc(100% - calc(100% - 50px));" close="currentRow = null">
           <el-card class="box-card">
             <el-table ref="singleTable" :data="points" highlight-current-row @current-change="handleCurrentChange" style="width: 100%">
+                <el-table-column label="序号" width="50">
+                  <template slot-scope="scope">
+                    {{ scope.row.markId }}
+                  </template>
+                </el-table-column>
 
-              <el-table-column label="序号" width="50">
-                <template slot-scope="scope">
-                  {{ scope.$index }}
-                </template>
-              </el-table-column>
+                <el-table-column label="经度" width="100">
+                  <template slot-scope="scope">
+                    {{ scope.row.lat }}
+                  </template>
+                </el-table-column>
 
-              <el-table-column label="经度" width="100">
-                <template slot-scope="scope">
-                  {{ scope.row.lat }}
-                </template>
-              </el-table-column>
+                <el-table-column property="lng" label="纬度" width="100">
+                  <template slot-scope="scope">
+                    {{ scope.row.lng }}
+                  </template>
+                </el-table-column>
 
-              <el-table-column property="lng" label="纬度" width="100">
-                <template slot-scope="scope">
-                  {{ scope.row.lng }}
-                </template>
-              </el-table-column>
+                <el-table-column property="lng" label="检测目标" width="90">
+                  <template slot-scope="scope">
+                    {{ scope.row.target }}
+                  </template>
+                </el-table-column>
 
-              <el-table-column property="lng" label="检测目标" width="90">
-                <template slot-scope="scope">
-                  {{ scope.row.target }}
-                </template>
-              </el-table-column>
+                <el-table-column property="lng" label="检测日期" width="120">
+                  <template slot-scope="scope">
+                    {{ scope.row.testTime }}
+                  </template>
+                </el-table-column>
 
-              <el-table-column property="lng" label="检测日期" width="120">
-                <template slot-scope="scope">
-                  {{ scope.row.testTime }}
-                </template>
-              </el-table-column>
+                <el-table-column label="操作" width="125">
+                  <template slot-scope="scope">
+                    <el-button size="mini" type="text" icon="el-icon-reading" @click="detailRow(scope.$index, scope.row)">
+                      详情
+                    </el-button>
 
-              <el-table-column label="操作" width="125">
-                <template slot-scope="scope">
-                  <el-button size="mini" type="text" icon="el-icon-reading" @click="detailRow(scope.$index, scope.row)">
-                    详情
-                  </el-button>
+                    <el-button size="mini" type="text" icon="el-icon-notebook-1" @click="reformRow(scope.$index, scope.row)">
+                      整改
+                    </el-button>
+                  </template>
+                </el-table-column>
 
-                  <el-button size="mini" type="text" icon="el-icon-notebook-1" @click="reformRow(scope.$index, scope.row)">
-                    整改
-                  </el-button>
-                </template>
-              </el-table-column>
             </el-table>
             <el-pagination
               background
@@ -97,6 +99,7 @@
     import { listMark } from "@/api/platform/mark";
 
     import { jsonp } from 'vue-jsonp';
+    import {getMark} from "../../../api/platform/mark";
     export default {
       name: "index",
       data() {
@@ -115,55 +118,56 @@
             markId: null,
             lng: null,
             lat: null,
-            region: null,
+            province: "",
+            city: "",
+            district: "",
             target: null,
             address: null,
             testTime: null,
             animation: null,
-            finished: null
+            finished: false,
           },
           total: null,
           currentRow: null,
-          form: {
-            name: '',
-            region: '',
-            date1: '2022-06-12',
-            date2: '',
-            delivery: false,
-            type: [],
-            resource: '',
-            desc: 'XXX村XXX'
-          },
           detailItem: {
             activityList: null,
             address: '',
             lat: '',
             lng: '',
             target: '',
-            region: '',
+            province: '',
+            city: '',
+            district: '',
             testTime: '',
             markId: '',
           },
         }
       },
       created() {
-        this.getArea();
-        this.getMarkList();
+        this.initData();
       },
+
       methods: {
-        getArea() {
+        initData() {
           getUserProfile().then(response => {
-            // console.log(response.data);
-            const level = response.data.dept.deptName;
-            if(level == "省级部门") {
+            const lev = response.data.level;
+            let reg = "";
+            this.queryParams.province = response.data.province;
+            // console.log(this.queryParams.province);
+            if(lev == 1) {
               this.mapZoomLevel = 8;
-            } else if(level == "市级部门") {
+              reg += response.data.province;
+            } else if(lev == 2) {
               this.mapZoomLevel = 10;
-            } else if(level == "县级部门") {
+              reg += response.data.province + response.data.city;
+              this.queryParams.city = response.data.city;
+            } else if(lev == 3) {
               this.mapZoomLevel = 13;
+              reg += response.data.province + response.data.city + response.data.district;
+              this.queryParams.district = response.data.district;
             }
-            this.areaName = response.data.region;
-            this.drawerTitle = response.data.region + "村容村貌监测数据";
+            this.areaName = reg;
+            this.drawerTitle = this.areaName + "村容村貌监测数据";
             const res =  jsonp('http://api.map.baidu.com/geocoding/v3/', {
               address: this.areaName,
               output: 'json',
@@ -173,15 +177,16 @@
             res.then(ress => {
               this.center = ress.result.location;
             })
-          });
-        },
-        getMarkList() {
-          listMark(this.queryParams).then(response => {
-            this.points = response.rows;
-            this.total = response.total;
-            for(let i = 0; i < this.total; i++) {
-              this.points[i].animation = "";
-            }
+            // console.log(this.queryParams.province, this.queryParams.city, this.queryParams.district);
+
+            listMark(this.queryParams).then(response => {
+              this.points = response.rows;
+              this.total = response.total;
+              for(let i = 0; i < this.total; i++) {
+                this.points[i].animation = "";
+              }
+              // console.log(this.points);
+            });
           });
         },
         async openDrawer(val) {
@@ -203,7 +208,7 @@
           const rowData = this.points[index];
           this.detailItem = rowData;
           this.detailDialogVisible = true;
-          console.log(this.detailItem);
+          // console.log(this.detailItem);
         },
         // 整改
         async reformRow(index, row) {

@@ -56,8 +56,19 @@ public class SysUser extends BaseEntity
     /** 密码 */
     private String password;
 
-    /** 所在地区 */
-    private String region;
+    @Excel(name = "省")
+    private String province;
+
+    @Excel(name = "市")
+    private String city;
+
+    @Excel(name = "区")
+    private String district;
+
+
+    @Excel(name = "层级")
+    private int level;
+
 
     /** 帐号状态（0正常 1停用） */
     @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用")
@@ -211,12 +222,36 @@ public class SysUser extends BaseEntity
         this.password = password;
     }
 
-    public String getRegion() {
-        return region;
+    public String getProvince() {
+        return province;
     }
 
-    public void setRegion(String region) {
-        this.region = region;
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public String getStatus()
@@ -321,7 +356,10 @@ public class SysUser extends BaseEntity
             .append("sex", getSex())
             .append("avatar", getAvatar())
             .append("password", getPassword())
-            .append("region", getRegion())
+            .append("province", getProvince())
+            .append("city", getCity())
+            .append("district", getDistrict())
+            .append("level", getLevel())
             .append("status", getStatus())
             .append("delFlag", getDelFlag())
             .append("loginIp", getLoginIp())

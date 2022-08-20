@@ -52,6 +52,11 @@ public class MarkController extends BaseController
         for (Mark m : markList) {
             List<Activity> activityList = activityService.selectActivityByMarkId(m.getMarkId());
             m.setActivityList(activityList);
+            if(activityList.size() != 0) {
+                m.setProcess(activityList.get(0).getProcess());
+            } else {
+                m.setProcess("未责令整改");
+            }
         }
         return getDataTable(markList);
     }

@@ -9,13 +9,13 @@
 
             <el-tab-pane label="整改中" name="first">
               <el-table
-                :data="tableData"
+                :data="unFinishedPoints"
                 style="width: 100%">
                 <el-table-column
                   label="序号"
                   width="60">
                   <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ scope.$index }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.markId }}</span>
                   </template>
                 </el-table-column>
 
@@ -24,7 +24,7 @@
                   width="120">
                   <template slot-scope="scope">
                     <i class="el-icon-time"></i>
-                    <span style="margin-left: 10px">{{ scope.row.date }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.testTime }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column
@@ -71,7 +71,7 @@
                       </el-button>
                     </el-col>
                     <el-col :span="1.5">
-                      <el-button type="text" @click="detailVisible = true"><i class="el-icon-view el-icon--right"></i>查看</el-button>
+                      <el-button type="text" @click="unfinishedDetailRow(scope.$index, scope.row)"><i class="el-icon-view el-icon--right"></i>查看</el-button>
                     </el-col>
                   </template>
                 </el-table-column>
@@ -79,19 +79,19 @@
               <el-pagination
                 background
                 layout="prev, pager, next"
-                :total="1000">
+                :total="unfinishedTotal">
               </el-pagination>
             </el-tab-pane>
 
             <el-tab-pane label="已整改" name="second">
               <el-table
-                :data="tableData1"
+                :data="finishedPoints"
                 style="width: 100%">
                 <el-table-column
                   label="序号"
                   width="60">
                   <template slot-scope="scope">
-                    <span style="margin-left: 10px">{{ scope.$index }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.markId }}</span>
                   </template>
                 </el-table-column>
 
@@ -100,7 +100,7 @@
                   width="120">
                   <template slot-scope="scope">
                     <i class="el-icon-time"></i>
-                    <span style="margin-left: 10px">{{ scope.row.date }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.testTime }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column
@@ -142,7 +142,7 @@
                 <el-table-column label="操作">
                   <template slot-scope="scope">
                     <el-col :span="1.5">
-                      <el-button type="text" @click="detailVisible = true"><i class="el-icon-view el-icon--right"></i>查看</el-button>
+                      <el-button type="text" @click="finishedDetailRow(scope.$index, scope.row)"><i class="el-icon-view el-icon--right"></i>查看</el-button>
                     </el-col>
                   </template>
                 </el-table-column>
@@ -150,7 +150,7 @@
               <el-pagination
                 background
                 layout="prev, pager, next"
-                :total="1000">
+                :total="finishedTotal">
               </el-pagination>
             </el-tab-pane>
 
@@ -180,7 +180,7 @@
             <el-card class="box-card">
               <div style="color: #1890ff">
                 <div>已处理</div>
-                <span class="number">12</span> <span class="unit">件</span>
+                <span class="number">{{finishedTotal}}</span> <span class="unit">件</span>
                 <el-button type="text">查看></el-button>
               </div>
             </el-card>
@@ -268,7 +268,21 @@
     <!--  整改详情-->
     <el-dialog title="整改详情" :visible.sync="detailVisible" width="60%">
       <el-timeline>
-        <el-timeline-item :timestamp="'2022-04-12' + ' ' + '发现违章点'" placement="top" size="large" icon="el-icon-warning" type="warning">
+
+
+        <el-timeline-item v-for="(activity, index) in detailItem.activityList"
+                          :timestamp="activity.createTime + ' ' + activity.name"
+                          placement="top"
+                          size="large"
+                          :icon="activity.icon"
+                          :type="activity.type"
+                          :key="index">
+          <el-card>
+            {{activity.detail}}
+          </el-card>
+        </el-timeline-item>
+
+        <el-timeline-item :timestamp="detailItem.testTime + ' ' + '发现违章点'" placement="top" size="large" icon="el-icon-warning" type="warning">
           <el-card>
             <el-row>
               <el-col :span="8">
@@ -276,27 +290,16 @@
               </el-col>
               <el-col :span="16">
                 <el-descriptions title="违规情况" direction="vertical" :column="4" border>
-                  <el-descriptions-item label="序号">075589</el-descriptions-item>
-                  <el-descriptions-item label="经纬度">{102.55, 78.55}</el-descriptions-item>
-                  <el-descriptions-item label="所属地区" :span="2">五尧乡</el-descriptions-item>
+                  <el-descriptions-item label="序号">{{detailItem.markId}}</el-descriptions-item>
+                  <el-descriptions-item label="经纬度">{ {{detailItem.lat}} , {{detailItem.lng}} }</el-descriptions-item>
+                  <el-descriptions-item label="所属地区" :span="2">{{detailItem.region}}</el-descriptions-item>
                   <el-descriptions-item label="检测目标">
-                    <el-tag size="small" type="warning">乱堆乱放</el-tag>
+                    <el-tag size="small" type="warning">{{detailItem.target}}</el-tag>
                   </el-descriptions-item>
-                  <el-descriptions-item label="详细地址">河北省保定市五尧乡xx</el-descriptions-item>
+                  <el-descriptions-item label="详细地址">{{detailItem.address}}</el-descriptions-item>
                 </el-descriptions>
               </el-col>
             </el-row>
-          </el-card>
-        </el-timeline-item>
-
-        <el-timeline-item v-for="(activity, index) in activities"
-                          :timestamp="activity.timestamp + ' ' + activity.content"
-                          placement="top"
-                          :size="activity.size"
-                          :icon="activity.icon"
-                          :type="activity.type"
-                          :key="index">
-          <el-card>
           </el-card>
         </el-timeline-item>
       </el-timeline>
@@ -529,8 +532,13 @@
               time: '2016-05-02',
             }
           ],
-          points: null,
-          queryParams: {
+
+          unFinishedPoints: null,
+          unfinishedTotal: null,
+          finishedPoints: null,
+          finishedTotal: null,
+          // not finished
+          queryParams1: {
             pageNum: 1,
             pageSize: 10,
             markId: null,
@@ -541,7 +549,21 @@
             address: null,
             testTime: null,
             animation: null,
-            finished: null
+            finished: false,
+          },
+          // finished
+          queryParams2: {
+            pageNum: 1,
+            pageSize: 10,
+            markId: null,
+            lng: null,
+            lat: null,
+            region: null,
+            target: null,
+            address: null,
+            testTime: null,
+            animation: null,
+            finished: true,
           },
           total: null,
           detailItem: {
@@ -553,18 +575,21 @@
             region: '',
             testTime: '',
             markId: '',
+            finished: null,
           },
           undo: 0,
-          finished: null,
           doing: null,
         }
       },
       created() {
+
         this.$nextTick(() => {
           this.initCharts();
         });
 
-        this.getMarkList();
+        this.getNotFinishedMarkList();
+
+        this.getFinishedMarkList();
 
       },
       methods: {
@@ -619,23 +644,80 @@
             myChart.resize()
           })
         },
-        getMarkList() {
-          listMark(this.queryParams).then(response => {
-            this.points = response.rows;
-            this.total = response.total;
-            for(let i = 0; i < this.total; i++) {
-              this.points[i].process = "";
-              const subsize = this.points[i].activityList.length;
-              if(subsize == 0) {
-                this.points[i].process = "未责令整改";
-                this.undo++;
-              } else {
-                this.points[i].process = this.points[i].activityList[subsize - 1].process;
-              }
+
+        // 获取未完成监测点
+        getNotFinishedMarkList() {
+          listMark(this.queryParams1).then(response => {
+            this.unFinishedPoints = response.rows;
+            this.unfinishedTotal = response.total;
+            for(let i = 0; i < this.unfinishedTotal; i++) {
+              if(this.unFinishedPoints[i].process == "未责令整改") this.undo++;
+              const tg = this.unFinishedPoints[i].target;
+              if(tg == "乱搭乱建") this.unFinishedPoints[i].type = "danger";
+              else if(tg == "乱堆乱放") this.unFinishedPoints[i].type = "warning";
+              else if(tg == "乱贴乱画") this.unFinishedPoints[i].type = "info";
+
+              const ps = this.unFinishedPoints[i].process;
+
+              if(ps == "未责令整改") this.unFinishedPoints[i].attType = "warning";
+              else if(ps == "整改中") this.unFinishedPoints[i].attType = "";
+              else if(ps == "反馈未通过") this.unFinishedPoints[i].attType = "danger";
             }
-            console.log(this.points);
+            console.log(this.unFinishedPoints);
           });
         },
+
+        // 获取已完成监测点
+        getFinishedMarkList() {
+          listMark(this.queryParams2).then(response => {
+            this.finishedPoints = response.rows;
+            this.finishedTotal = response.total;
+
+            for(let i = 0; i < this.finishedTotal; i++) {
+              this.finishedPoints[i].attType = "success";
+
+              const tg = this.finishedPoints[i].target;
+              if(tg == "乱搭乱建") this.finishedPoints[i].type = "danger";
+              else if(tg == "乱堆乱放") this.finishedPoints[i].type = "warning";
+              else if(tg == "乱贴乱画") this.finishedPoints[i].type = "info";
+
+            }
+            console.log(this.finishedPoints);
+          });
+        },
+
+        // 已完成监测点 详情页
+        async finishedDetailRow(index, row) {
+          this.detailItem = null;
+          const rowData = this.finishedPoints[index];
+          this.detailItem = rowData;
+
+          for(let i = 0; i < this.detailItem.activityList.length; i++) {
+            const act = this.detailItem.activityList[i];
+            if(act.name == "责令整改通知") {
+              this.detailItem.activityList[i].icon = "el-icon-s-release";
+              this.detailItem.activityList[i].type = "danger";
+            } else if(act.name == "整改反馈") {
+              this.detailItem.activityList[i].icon = "el-icon-s-check";
+              this.detailItem.activityList[i].type = "warning";
+            } else if(act.name == "反馈通过") {
+              this.detailItem.activityList[i].icon = "el-icon-s-claim";
+              this.detailItem.activityList[i].type = "success";
+            }
+          }
+
+          this.detailVisible = true;
+          console.log(this.detailItem);
+        },
+
+        // 未完成监测点 详情页
+        async unfinishedDetailRow(index, row) {
+          this.detailItem = null;
+          const rowData = this.unFinishedPoints[index];
+          this.detailItem = rowData;
+          this.detailVisible = true;
+          console.log(this.detailItem);
+        }
       }
     }
 </script>

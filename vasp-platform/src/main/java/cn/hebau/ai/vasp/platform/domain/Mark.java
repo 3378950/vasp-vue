@@ -31,9 +31,21 @@ public class Mark extends BaseEntity
     @Excel(name = "纬度")
     private Double lat;
 
-    /** 所属地区 */
-    @Excel(name = "所属地区")
-    private String region;
+    /** 省 */
+    @Excel(name = "省")
+    private String province;
+
+    /** 市 */
+    @Excel(name = "市")
+    private String city;
+
+    /** 区 */
+    @Excel(name = "区")
+    private String district;
+
+    /** 层级 */
+    @Excel(name = "层级")
+    private String level;
 
     /** 检测目标 */
     @Excel(name = "检测目标")
@@ -55,6 +67,9 @@ public class Mark extends BaseEntity
     /** 整改是否完成 */
     @Excel(name = "整改是否完成")
     private boolean finished;
+
+    @Excel(name = "整改进程")
+    private String process;
 
     /** 整改动态信息 */
     private List<Activity> activityList;
@@ -86,15 +101,39 @@ public class Mark extends BaseEntity
     {
         return lat;
     }
-    public void setRegion(String region)
-    {
-        this.region = region;
+
+    public String getProvince() {
+        return province;
     }
 
-    public String getRegion()
-    {
-        return region;
+    public void setProvince(String province) {
+        this.province = province;
     }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistinct(String district) {
+        this.district = district;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
     public void setTarget(String target)
     {
         this.target = target;
@@ -141,6 +180,14 @@ public class Mark extends BaseEntity
         return finished;
     }
 
+    public String getProcess() {
+        return process;
+    }
+
+    public void setProcess(String process) {
+        this.process = process;
+    }
+
     public List<Activity> getActivityList()
     {
         return activityList;
@@ -157,12 +204,16 @@ public class Mark extends BaseEntity
                 .append("markId", getMarkId())
                 .append("lng", getLng())
                 .append("lat", getLat())
-                .append("region", getRegion())
+                .append("province", getProvince())
+                .append("city", getCity())
+                .append("district", getDistrict())
+                .append("level", getLevel())
                 .append("target", getTarget())
                 .append("address", getAddress())
                 .append("testTime", getTestTime())
                 .append("animation", getAnimation())
                 .append("finished", getFinished())
+                .append("process", getProcess())
                 .append("activityList", getActivityList())
                 .toString();
     }

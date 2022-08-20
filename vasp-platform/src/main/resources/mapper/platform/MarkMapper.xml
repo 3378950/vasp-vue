@@ -8,7 +8,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="markId"    column="mark_id"    />
         <result property="lng"    column="lng"    />
         <result property="lat"    column="lat"    />
-        <result property="region"    column="region"    />
+        <result property="province"     column="province"     />
+        <result property="city"     	column="city"     	  />
+        <result property="district"     column="district"     />
         <result property="target"    column="target"    />
         <result property="address"    column="address"    />
         <result property="testTime"    column="test_time"    />
@@ -30,7 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMarkVo">
-        select mark_id, lng, lat, region, target, address, test_time, animation, finished from plt_mark
+        select mark_id, lng, lat, province, city, district , target, address, test_time, animation, finished from plt_mark
     </sql>
 
     <select id="selectMarkList" parameterType="Mark" resultMap="MarkResult">
@@ -39,17 +41,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="markId != null "> and mark_id = #{markId}</if>
             <if test="lng != null "> and lng = #{lng}</if>
             <if test="lat != null "> and lat = #{lat}</if>
-            <if test="region != null  and region != ''"> and region = #{region}</if>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="district != null  and district != ''"> and district = #{district}</if>
             <if test="target != null  and target != ''"> and target = #{target}</if>
             <if test="address != null  and address != ''"> and address = #{address}</if>
             <if test="testTime != null "> and test_time = #{testTime}</if>
             <if test="animation != null  and animation != ''"> and animation = #{animation}</if>
-            <if test="finished != null "> and finished = #{finished}</if>
+            <if test="finished != null"> and finished = #{finished}</if>
         </where>
     </select>
 
     <select id="selectMarkByMarkId" parameterType="Long" resultMap="MarkActivityResult">
-        select a.mark_id, a.lng, a.lat, a.region, a.target, a.address, a.test_time, a.animation, a.finished,
+        select a.mark_id, a.lng, a.lat, a.province, a.city, a.district, a.target, a.address, a.test_time, a.animation, a.finished,
                b.activity_id as sub_activity_id, b.name as sub_name, b.mark_id as sub_mark_id, b.detail as sub_detail, b.process as sub_process, b.create_time as sub_create_time
         from plt_mark a
                  left join plt_activity b on b.mark_id = a.mark_id
@@ -61,7 +65,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="lng != null">lng,</if>
             <if test="lat != null">lat,</if>
-            <if test="region != null and region != ''">region,</if>
+            <if test="province != null and province != ''">province,</if>
+            <if test="city != null and city != ''">city,</if>
+            <if test="district != null and district != ''">district,</if>
             <if test="target != null and target != ''">target,</if>
             <if test="address != null and address != ''">address,</if>
             <if test="testTime != null">test_time,</if>
@@ -71,7 +77,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="lng != null">#{lng},</if>
             <if test="lat != null">#{lat},</if>
-            <if test="region != null and region != ''">#{region},</if>
+            <if test="province != null and province != ''">#{province},</if>
+            <if test="city != null and city != ''">#{city},</if>
+            <if test="district != null and district != ''">#{district},</if>
             <if test="target != null and target != ''">#{target},</if>
             <if test="address != null and address != ''">#{address},</if>
             <if test="testTime != null">#{testTime},</if>
@@ -85,7 +93,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="lng != null">lng = #{lng},</if>
             <if test="lat != null">lat = #{lat},</if>
-            <if test="region != null and region != ''">region = #{region},</if>
+            <if test="province != null  and province != ''">province = #{province}</if>
+            <if test="city != null  and city != ''">city = #{city}</if>
+            <if test="district != null  and district != ''">district = #{district}</if>
             <if test="target != null and target != ''">target = #{target},</if>
             <if test="address != null and address != ''">address = #{address},</if>
             <if test="testTime != null">test_time = #{testTime},</if>

@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectActivityByMarkId" parameterType="Long" resultMap="ActivityResult">
         <include refid="selectActivityVo"/>
-        where mark_id = #{markId}
+        where mark_id = #{markId} order by create_time desc
     </select>
 
     <insert id="insertActivity" parameterType="Activity" useGeneratedKeys="true" keyProperty="activityId">
