@@ -35,6 +35,12 @@ public class Activity extends BaseEntity
     @Excel(name = "整改进程")
     private String process;
 
+    private String receiverRole;
+
+    private String receiverRegion;
+
+    private String receiverLevel;
+
     public void setActivityId(Long activityId)
     {
         this.activityId = activityId;
@@ -81,6 +87,30 @@ public class Activity extends BaseEntity
         return process;
     }
 
+    public String getReceiverRole() {
+        return receiverRole;
+    }
+
+    public void setReceiverRole(String receiverRole) {
+        this.receiverRole = receiverRole;
+    }
+
+    public String getReceiverRegion() {
+        return receiverRegion;
+    }
+
+    public void setReceiverRegion(String receiverRegion) {
+        this.receiverRegion = receiverRegion;
+    }
+
+    public String getReceiverLevel() {
+        return receiverLevel;
+    }
+
+    public void setReceiverLevel(String receiverLevel) {
+        this.receiverLevel = receiverLevel;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -90,6 +120,10 @@ public class Activity extends BaseEntity
                 .append("detail", getDetail())
                 .append("process", getProcess())
                 .append("createTime", getCreateTime())
+                .append("createBy", getCreateBy())
+                .append("receiverRole", getReceiverRole())
+                .append("receiverRegion", getReceiverRegion())
+                .append("receiverLevel", getReceiverLevel())
                 .toString();
     }
 }

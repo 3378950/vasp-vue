@@ -66,7 +66,7 @@
                 <el-table-column label="操作">
                   <template slot-scope="scope">
                     <el-col :span="1.5">
-                      <el-button type="text" @click="rectifyVisible = true" v-if="scope.row.process == '未责令整改'">
+                      <el-button type="text" @click="rectify(scope.$index)" v-if="scope.row.process == '未责令整改'">
                         <i class="el-icon-s-release el-icon--right"></i>整改
                       </el-button>
                     </el-col>
@@ -271,7 +271,7 @@
 
 
         <el-timeline-item v-for="(activity, index) in detailItem.activityList"
-                          :timestamp="activity.createTime + ' ' + activity.name"
+                          :timestamp="activity.createTime + ' ' + activity.createBy + ' ' + activity.name"
                           placement="top"
                           size="large"
                           :icon="activity.icon"
@@ -292,7 +292,7 @@
                 <el-descriptions title="违规情况" direction="vertical" :column="4" border>
                   <el-descriptions-item label="序号">{{detailItem.markId}}</el-descriptions-item>
                   <el-descriptions-item label="经纬度">{ {{detailItem.lat}} , {{detailItem.lng}} }</el-descriptions-item>
-                  <el-descriptions-item label="所属地区" :span="2">{{detailItem.region}}</el-descriptions-item>
+                  <el-descriptions-item label="所属地区" :span="2">{{detailItem.province + detailItem.city + detailItem.district}}</el-descriptions-item>
                   <el-descriptions-item label="检测目标">
                     <el-tag size="small" type="warning">{{detailItem.target}}</el-tag>
                   </el-descriptions-item>
@@ -307,7 +307,56 @@
 
     <!-- 发布整改通知-->
     <el-dialog title="责令整改" :visible.sync="rectifyVisible" width="60%">
+      <el-card>
+        <el-row>
+          <el-col :span="8">
+            <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 220px; height: 200px"></el-image>
+          </el-col>
+          <el-col :span="16">
+            <el-descriptions title="违规情况" direction="vertical" :column="4" border>
+              <el-descriptions-item label="序号">{{rectifyItem.markId}}</el-descriptions-item>
+              <el-descriptions-item label="经纬度">{ {{rectifyItem.lat}} , {{rectifyItem.lng}} }</el-descriptions-item>
+              <el-descriptions-item label="所属地区" :span="2">{{rectifyItem.province + rectifyItem.city + rectifyItem.district}}</el-descriptions-item>
+              <el-descriptions-item label="检测目标">
+                <el-tag size="small" type="warning">{{rectifyItem.target}}</el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item label="详细地址">{{rectifyItem.address}}</el-descriptions-item>
+            </el-descriptions>
+          </el-col>
+        </el-row>
+        <span> </span>
+        <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+          <el-form-item label="动态名称" prop="name">
+            <el-input :disabled="true" v-model="form.name" :placeholder="form.name" />
+          </el-form-item>
+          <el-form-item label="监测点编号" prop="markId">
+            <el-input  :disabled="true" v-model="form.markId" :placeholder="form.markId" />
+          </el-form-item>
+          <el-form-item label="动态详情" prop="detail">
+            <el-input :rows="5" type="textarea" v-model="form.detail" placeholder="请输入动态详情" />
+          </el-form-item>
 
+          <el-form-item label="接收者角色" prop="receiverRole">
+            <el-select v-model="form.receiverRole" placeholder="请选择接收者角色">
+              <el-option
+                v-for="role in roleList"
+                v-if="currentUser.level < role.level"
+                :key="role.value"
+                :label="role.label"
+                :value="role.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="接收者区域" prop="receiverRegion">
+            <el-input v-model="form.receiverRegion" placeholder="请输入接收者区域" />
+          </el-form-item>
+        </el-form>
+
+      </el-card>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
     </el-dialog>
 
   </div>
@@ -316,138 +365,21 @@
 <script>
   import bd from '../../../assets/geo/bd.json';
   import {listMark} from "../../../api/platform/mark";
+  import {getUserProfile} from "../../../api/system/user";
+  import {jsonp} from "vue-jsonp";
+  import {addActivity, updateActivity} from "../../../api/platform/activity";
     export default {
       data() {
         return {
-          tableData: [
-            {
-            date: '2016-05-02',
-            target: '乱搭乱建',
-            type: 'danger',
-            address: '莲池区',
-            process: '未责令整改',
-            attType: 'warning'
-            },
-            {
-              date: '2016-06-02',
-              target: '乱堆乱放',
-              type: 'warning',
-              address: '五尧乡',
-              process: '整改中',
-              attType: ''
-            },
-            {
-              date: '2016-05-02',
-              target: '乱搭乱建',
-              type: 'danger',
-              address: '莲池区',
-              process: '反馈未通过',
-              attType: 'danger'
-            },
-            {
-              date: '2016-06-02',
-              target: '乱堆乱放',
-              type: 'warning',
-              address: '五尧乡',
-              process: '未责令整改',
-              attType: 'warning',
 
-            },
-            {
-              date: '2016-08-02',
-              target: '乱贴乱画',
-              type: 'info',
-              address: '易县',
-              process: '整改中',
-              attType: '',
-            },
-            {
-              date: '2016-05-02',
-              target: '乱搭乱建',
-              type: 'danger',
-              address: '莲池区',
-              process: '整改中',
-              attType: '',
-            },
-            {
-              date: '2016-06-02',
-              target: '乱堆乱放',
-              type: 'warning',
-              address: '五尧乡',
-              process: '整改中',
-              attType: '',
+          currentUser: {
+              username: "",
+              province: "",
+              city: "",
+              district: "",
+              level: null,
+          },
 
-            },
-            {
-              date: '2016-08-02',
-              target: '乱贴乱画',
-              type: 'info',
-              address: '易县',
-              process: '未责令整改',
-              attType: 'warning',
-
-            },
-            {
-              date: '2016-08-02',
-              target: '乱贴乱画',
-              type: 'info',
-              address: '易县',
-              process: '未责令整改',
-              attType: 'warning',
-              info: ''
-
-            },
-          ],
-          tableData1: [
-            {
-              date: '2016-05-02',
-              target: '乱搭乱建',
-              type: 'danger',
-              address: '莲池区',
-              process: '整改完成',
-              attType: 'success'
-            },
-            {
-              date: '2016-06-02',
-              target: '乱堆乱放',
-              type: 'warning',
-              address: '五尧乡',
-              process: '整改完成',
-              attType: 'success'
-            },
-            {
-              date: '2016-05-02',
-              target: '乱搭乱建',
-              itemType: 'danger',
-              address: '莲池区',
-              process: '整改完成',
-              attType: 'success'
-            },
-            {
-              date: '2016-06-02',
-              target: '乱堆乱放',
-              type: 'warning',
-              address: '五尧乡',
-              process: '整改完成',
-              attType: 'success',
-            },
-            {
-              date: '2016-08-02',
-              target: '乱贴乱画',
-              type: 'info',
-              address: '易县',
-              process: '整改完成',
-              attType: 'success',
-            },
-            {
-              date: '2016-05-02',
-              target: '乱搭乱建',
-              type: 'danger',
-              address: '莲池区',
-              process: '整改完成',
-              attType: 'success',
-            }
-          ],
           activeName: 'first',
           rectifyVisible: false,
           detailVisible: false,
@@ -477,43 +409,7 @@
             { name: '博野县', value: 55 },
             { name: '满城区', value: 60 },
             { name: '安国市', value: 30 },
-
           ],
-          activities: [
-            {
-              content: '责令整改通知',
-              timestamp: '2022-05-03 8:03',
-              size: 'large',
-              icon: 'el-icon-s-release',
-              type: 'danger',
-              detail: '',
-            },
-            {
-              content: '整改情况反馈',
-              timestamp: '2022-05-15 9:26',
-              size: 'large',
-              type: 'warning',
-              icon: 'el-icon-s-check',
-              detail: '',
-            },
-            {
-              content: '反馈情况通过',
-              timestamp: '2022-06-01 8:16',
-              size: 'large',
-              type: 'success',
-              icon: 'el-icon-s-claim',
-              detail: '',
-            }],
-          form: {
-            name: '',
-            region: '',
-            date1: '2022-06-12',
-            date2: '',
-            delivery: false,
-            type: [],
-            resource: '',
-            desc: 'XXX村XXX'
-          },
           notice: [
             {
               title: '关于做好全镇农村人居环境村容',
@@ -532,7 +428,6 @@
               time: '2016-05-02',
             }
           ],
-
           unFinishedPoints: null,
           unfinishedTotal: null,
           finishedPoints: null,
@@ -544,7 +439,9 @@
             markId: null,
             lng: null,
             lat: null,
-            region: null,
+            province: "",
+            city: "",
+            district: "",
             target: null,
             address: null,
             testTime: null,
@@ -558,7 +455,9 @@
             markId: null,
             lng: null,
             lat: null,
-            region: null,
+            province: "",
+            city: "",
+            district: "",
             target: null,
             address: null,
             testTime: null,
@@ -572,27 +471,101 @@
             lat: '',
             lng: '',
             target: '',
-            region: '',
+            province: '',
+            city: '',
+            district: '',
             testTime: '',
             markId: '',
             finished: null,
           },
+          rectifyItem: {},
           undo: 0,
           doing: null,
+          form: {},
+          rules: {
+            name: [
+              { required: true, message: "动态名称不能为空", trigger: "blur" }
+            ],
+            markId: [
+              { required: true, message: "所属监测点不能为空", trigger: "blur" }
+            ],
+            createTime: [
+              { required: true, message: "创建时间不能为空", trigger: "blur" }
+            ],
+            createBy: [
+              { required: true, message: "创建者不能为空", trigger: "blur" }
+            ],
+            receiverRole: [
+              { required: true, message: "接收者角色不能为空", trigger: "blur" }
+            ],
+            receiverRegion: [
+              { required: true, message: "接收者区域不能为空", trigger: "blur" }
+            ],
+          },
+          roleList: [{
+              value: "省级管理员",
+              level: 1,
+            },{
+              value: "市级管理员",
+              level: 2,
+            },{
+              value: "区县级管理员",
+              level: 3,
+            }
+          ]
         }
       },
       created() {
 
-        this.$nextTick(() => {
-          this.initCharts();
-        });
+        this.initData();
 
-        this.getNotFinishedMarkList();
-
-        this.getFinishedMarkList();
+        // this.$nextTick(() => {
+        //   this.initCharts();
+        // });
+        //
+        // this.getNotFinishedMarkList();
+        //
+        // this.getFinishedMarkList();
 
       },
       methods: {
+
+        initData() {
+          getUserProfile().then(response => {
+
+            // 初始化当前用户信息
+            this.currentUser.username = response.data.userName;
+            this.currentUser.province = response.data.province;
+            this.currentUser.city = response.data.city;
+            this.currentUser.district = response.data.district;
+            this.currentUser.level = response.data.level;
+
+            console.log(response);
+            const lev = response.data.level;
+            this.queryParams1.province = response.data.province;
+            this.queryParams2.province = response.data.province;
+            // console.log(this.queryParams.province);
+            if(lev == 2) {
+              this.queryParams1.city = response.data.city;
+              this.queryParams2.city = response.data.city;
+            } else if(lev == 3) {
+              this.queryParams1.district = response.data.district;
+              this.queryParams2.district = response.data.district;
+            }
+
+            // console.log(this.queryParams1.province, this.queryParams1.city, this.queryParams1.district);
+            this.initCharts();
+
+            // 获取未完成监测点
+            this.getUnfinishedMarkList()
+
+
+            // 获取已完成监测点
+            this.getFinishedMarkList();
+          });
+        },
+
+
         initCharts() {
           this.$echarts.registerMap('bd', bd);
           let myChart = this.$echarts.init(this.$refs.myChart)
@@ -646,7 +619,7 @@
         },
 
         // 获取未完成监测点
-        getNotFinishedMarkList() {
+        getUnfinishedMarkList() {
           listMark(this.queryParams1).then(response => {
             this.unFinishedPoints = response.rows;
             this.unfinishedTotal = response.total;
@@ -663,7 +636,7 @@
               else if(ps == "整改中") this.unFinishedPoints[i].attType = "";
               else if(ps == "反馈未通过") this.unFinishedPoints[i].attType = "danger";
             }
-            console.log(this.unFinishedPoints);
+            // console.log(this.unFinishedPoints);
           });
         },
 
@@ -682,7 +655,7 @@
               else if(tg == "乱贴乱画") this.finishedPoints[i].type = "info";
 
             }
-            console.log(this.finishedPoints);
+            // console.log(this.finishedPoints);
           });
         },
 
@@ -710,14 +683,88 @@
           console.log(this.detailItem);
         },
 
+        rectify(index) {
+          this.rectifyItem = null;
+
+          this.rectifyVisible = true;
+
+          this.rectifyItem = this.unFinishedPoints[index];
+
+          this.form.name = "责令整改通知";
+
+          this.form.process = "整改中";
+
+          this.form.createBy = this.currentUser.username;
+
+          this.form.markId = this.rectifyItem.markId;
+        },
+
         // 未完成监测点 详情页
         async unfinishedDetailRow(index, row) {
           this.detailItem = null;
           const rowData = this.unFinishedPoints[index];
           this.detailItem = rowData;
+
+          for(let i = 0; i < this.detailItem.activityList.length; i++) {
+            const act = this.detailItem.activityList[i];
+            if(act.name == "责令整改通知") {
+              this.detailItem.activityList[i].icon = "el-icon-s-release";
+              this.detailItem.activityList[i].type = "danger";
+            } else if(act.name == "整改反馈") {
+              this.detailItem.activityList[i].icon = "el-icon-s-check";
+              this.detailItem.activityList[i].type = "warning";
+            } else if(act.name == "反馈通过") {
+              this.detailItem.activityList[i].icon = "el-icon-s-claim";
+              this.detailItem.activityList[i].type = "success";
+            }
+          }
           this.detailVisible = true;
           console.log(this.detailItem);
-        }
+        },
+
+        // 取消按钮
+        cancel() {
+          this.rectifyVisible = false;
+          this.reset();
+        },
+        // 表单重置
+        reset() {
+          this.form = {
+            activityId: null,
+            name: null,
+            markId: null,
+            detail: null,
+            process: null,
+            createTime: null,
+            createBy: null,
+            receiverRole: null,
+            receiverRegion: null,
+            receiverLevel: null
+          };
+          this.resetForm("form");
+        },
+
+        /** 提交按钮 */
+        submitForm() {
+          this.$refs["form"].validate(valid => {
+            if (valid) {
+              if (this.form.activityId != null) {
+                updateActivity(this.form).then(response => {
+                  this.$modal.msgSuccess("修改成功");
+                  this.rectifyVisible = false;
+                  this.initData();
+                });
+              } else {
+                addActivity(this.form).then(response => {
+                  this.$modal.msgSuccess("新增成功");
+                  this.rectifyVisible = false;
+                  this.initData();
+                });
+              }
+            }
+          });
+        },
+
       }
     }
 </script>

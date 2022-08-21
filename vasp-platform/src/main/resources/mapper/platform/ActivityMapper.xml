@@ -11,11 +11,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="detail"    column="detail"    />
         <result property="process"    column="process"    />
         <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="receiverRole"    column="receiver_role"    />
+        <result property="receiverRegion"    column="receiver_region" />
+        <result property="receiverLevel"    column="receiver_level"    />
+
     </resultMap>
 
 
     <sql id="selectActivityVo">
-        select activity_id, name, mark_id, detail, process, create_time from plt_activity
+        select activity_id, name, mark_id, detail, process, create_time, create_by, receiver_role, receiver_region, receiver_level  from plt_activity
     </sql>
 
     <select id="selectActivityList" parameterType="Activity" resultMap="ActivityResult">
@@ -27,6 +32,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="detail != null  and detail != ''"> and detail = #{detail}</if>
             <if test="process != null  and process != ''"> and process = #{process}</if>
             <if test="createTime != null "> and create_time = #{createTime}</if>
+            <if test="createBy != null  and createBy != ''"> and createBy = #{createBy}</if>
+            <if test="receiverRole != null  and receiverRole != ''"> and receiverRole = #{receiverRole}</if>
+            <if test="receiverRegion != null  and receiverRegion != ''"> and receiverRegion = #{receiverRegion}</if>
+            <if test="receiverLevel != null  and receiverLevel != ''"> and receiverLevel = #{receiverLevel}</if>
         </where>
     </select>
     
@@ -48,6 +57,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="detail != null">detail,</if>
             <if test="process != null">process,</if>
             <if test="createTime != null">create_time,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="receiverRole != null and receiverRole != ''">receiver_role,</if>
+            <if test="receiverRegion != null and receiverRegion != ''">receiver_region,</if>
+            <if test="receiverLevel != null and receiverLevel != ''">receiver_level,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null and name != ''">#{name},</if>
@@ -55,6 +68,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="detail != null">#{detail},</if>
             <if test="process != null">#{process},</if>
             <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="receiverRole != null and receiverRole != ''">#{receiverRole},</if>
+            <if test="receiverRegion != null and receiverRegion != ''">#{receiverRegion},</if>
+            <if test="receiverLevel != null and receiverLevel != ''">#{receiverLevel},</if>
         </trim>
     </insert>
 
@@ -66,6 +83,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="detail != null">detail = #{detail},</if>
             <if test="process != null">process = #{process},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="receiverRole != null and receiverRole != ''">receiver_role = #{receiverRole},</if>
+            <if test="receiverRegion != null and receiverRegion != ''">receiver_region = #{receiverRegion},</if>
+            <if test="receiverLevel != null and receiverLevel != ''">receiver_level = #{receiverLevel},</if>
         </trim>
         where activity_id = #{activityId}
     </update>

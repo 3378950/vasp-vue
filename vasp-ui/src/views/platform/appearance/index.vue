@@ -76,7 +76,7 @@
             <el-descriptions title="违规情况" direction="vertical" :column="4" border>
               <el-descriptions-item label="序号">{{detailItem.markId}}</el-descriptions-item>
               <el-descriptions-item label="经纬度">{ {{detailItem.lng}} , {{detailItem.lat}} }</el-descriptions-item>
-              <el-descriptions-item label="所属地区" :span="2">{{detailItem.region}}</el-descriptions-item>
+              <el-descriptions-item label="所属地区" :span="2">{{detailItem.province + detailItem.city + detailItem.district}}</el-descriptions-item>
               <el-descriptions-item label="检测目标">
                 <el-tag size="small" type="warning">{{detailItem.target}}</el-tag>
               </el-descriptions-item>
