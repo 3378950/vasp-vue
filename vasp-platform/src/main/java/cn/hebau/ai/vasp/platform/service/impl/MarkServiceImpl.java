@@ -72,8 +72,8 @@ public class MarkServiceImpl implements IMarkService
     @Override
     public int updateMark(Mark mark)
     {
-        markMapper.deleteActivityByMarkId(mark.getMarkId());
-        insertActivity(mark);
+//        markMapper.deleteActivityByMarkId(mark.getMarkId());
+//        insertActivity(mark);
         return markMapper.updateMark(mark);
     }
 

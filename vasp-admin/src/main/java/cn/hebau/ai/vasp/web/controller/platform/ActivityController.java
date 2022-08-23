@@ -2,6 +2,8 @@ package cn.hebau.ai.vasp.web.controller.platform;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import cn.hebau.ai.vasp.platform.service.IMarkService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +35,10 @@ public class ActivityController extends BaseController
 {
     @Autowired
     private IActivityService activityService;
+
+    @Autowired
+    private IMarkService markService;
+
 
     /**
      * 查询整改动态列表

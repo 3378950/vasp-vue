@@ -43,7 +43,7 @@ public class MarkController extends BaseController
     /**
      * 查询检测列表
      */
-//    @PreAuthorize("@ss.hasPermi('platform:mark:list')")
+    @PreAuthorize("@ss.hasPermi('platform:mark:list')")
     @GetMapping("/list")
     public TableDataInfo list(Mark mark)
     {
@@ -52,11 +52,6 @@ public class MarkController extends BaseController
         for (Mark m : markList) {
             List<Activity> activityList = activityService.selectActivityByMarkId(m.getMarkId());
             m.setActivityList(activityList);
-            if(activityList.size() != 0) {
-                m.setProcess(activityList.get(0).getProcess());
-            } else {
-                m.setProcess("未责令整改");
-            }
         }
         return getDataTable(markList);
     }

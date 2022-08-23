@@ -122,7 +122,7 @@ public class Mark extends BaseEntity
         return district;
     }
 
-    public void setDistinct(String district) {
+    public void setDistrict(String district) {
         this.district = district;
     }
 

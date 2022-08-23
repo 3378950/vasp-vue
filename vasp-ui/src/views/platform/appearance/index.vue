@@ -48,12 +48,8 @@
 
                 <el-table-column label="操作" width="125">
                   <template slot-scope="scope">
-                    <el-button size="mini" type="text" icon="el-icon-reading" @click="detailRow(scope.$index, scope.row)">
+                    <el-button size="mini" type="text" icon="el-icon-reading" @click="detailRow(scope.$index)">
                       详情
-                    </el-button>
-
-                    <el-button size="mini" type="text" icon="el-icon-notebook-1" @click="reformRow(scope.$index, scope.row)">
-                      整改
                     </el-button>
                   </template>
                 </el-table-column>
@@ -68,26 +64,57 @@
         </el-drawer>
 
       <el-dialog title="检测情况" :visible.sync="detailDialogVisible" width="60%">
-        <el-row>
-          <el-col :span="8">
-            <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 250px; height: 200px"></el-image>
-          </el-col>
-          <el-col :span="16">
-            <el-descriptions title="违规情况" direction="vertical" :column="4" border>
-              <el-descriptions-item label="序号">{{detailItem.markId}}</el-descriptions-item>
-              <el-descriptions-item label="经纬度">{ {{detailItem.lng}} , {{detailItem.lat}} }</el-descriptions-item>
-              <el-descriptions-item label="所属地区" :span="2">{{detailItem.province + detailItem.city + detailItem.district}}</el-descriptions-item>
-              <el-descriptions-item label="检测目标">
-                <el-tag size="small" type="warning">{{detailItem.target}}</el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item label="详细地址">{{detailItem.address}}</el-descriptions-item>
-            </el-descriptions>
-          </el-col>
-        </el-row>
+
+
+        <el-card>
+          <el-row>
+            <el-col :span="8">
+              <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 250px; height: 200px"></el-image>
+            </el-col>
+            <el-col :span="16">
+              <el-descriptions title="违规情况" direction="vertical" :column="4" border>
+                <el-descriptions-item label="序号">{{detailItem.markId}}</el-descriptions-item>
+                <el-descriptions-item label="经纬度">{ {{detailItem.lng}} , {{detailItem.lat}} }</el-descriptions-item>
+                <el-descriptions-item label="所属地区" :span="2">{{detailItem.province + detailItem.city + detailItem.district}}</el-descriptions-item>
+                <el-descriptions-item label="检测目标">
+                  <el-tag size="small" type="warning">{{detailItem.target}}</el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item label="详细地址">{{detailItem.address}}</el-descriptions-item>
+              </el-descriptions>
+            </el-col>
+          </el-row>
+          <el-form ref="form" :model="form" :rules="rules" label-width="100px" style="padding: 20px">
+            <el-form-item label="动态名称" prop="name">
+              <el-input :disabled="true" v-model="form.name" :placeholder="form.name" />
+            </el-form-item>
+            <el-form-item label="监测点编号" prop="markId">
+              <el-input  :disabled="true" v-model="form.markId" :placeholder="form.markId" />
+            </el-form-item>
+            <el-form-item label="动态详情" prop="detail">
+              <el-input :rows="5" type="textarea" v-model="form.detail" placeholder="请输入动态详情" />
+            </el-form-item>
+
+            <el-form-item label="接收者角色" prop="receiverRole">
+              <el-select v-model="form.receiverRole" placeholder="请选择接收者角色">
+                <el-option
+                  v-for="role in roleList"
+                  v-if="currentUser.level < role.level"
+                  :key="role.value"
+                  :label="role.label"
+                  :value="role.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="接收者区域" prop="receiverRegion">
+              <el-input v-model="form.receiverRegion" placeholder="请输入接收者区域" />
+            </el-form-item>
+          </el-form>
+
+        </el-card>
 
         <span slot="footer" class="dialog-footer">
           <el-button @click="detailDialogVisible = false">关闭</el-button>
-          <el-button type="primary" @click="openReformDialog">整改</el-button>
+          <el-button type="primary" @click="submitRectifyForm">整改</el-button>
         </span>
       </el-dialog>
 
@@ -99,7 +126,8 @@
     import { listMark } from "@/api/platform/mark";
 
     import { jsonp } from 'vue-jsonp';
-    import {getMark} from "../../../api/platform/mark";
+    import {getMark, updateMark} from "../../../api/platform/mark";
+    import {addActivity, updateActivity} from "../../../api/platform/activity";
     export default {
       name: "index",
       data() {
@@ -112,6 +140,19 @@
           drawerTitle: "",
           center: null,
           points: null,
+
+          currentUser: {
+            username: "",
+            role: "",
+            province: "",
+            city: "",
+            district: "",
+            level: null,
+            region: "",
+          },
+
+          // 获取未整改监测点
+          form: {},
           queryParams: {
             pageNum: 1,
             pageSize: 10,
@@ -126,6 +167,7 @@
             testTime: null,
             animation: null,
             finished: false,
+            process: "未责令整改",
           },
           total: null,
           currentRow: null,
@@ -141,6 +183,42 @@
             testTime: '',
             markId: '',
           },
+          rectifyForm: {},
+          rules: {
+            name: [
+              { required: true, message: "动态名称不能为空", trigger: "blur" }
+            ],
+            markId: [
+              { required: true, message: "所属监测点不能为空", trigger: "blur" }
+            ],
+            createTime: [
+              { required: true, message: "创建时间不能为空", trigger: "blur" }
+            ],
+            createBy: [
+              { required: true, message: "创建者不能为空", trigger: "blur" }
+            ],
+            receiverRole: [
+              { required: true, message: "接收者角色不能为空", trigger: "blur" }
+            ],
+            receiverRegion: [
+              { required: true, message: "接收者区域不能为空", trigger: "blur" }
+            ],
+          },
+          roleList: [
+            {
+              label: "省级管理员",
+              value: "province-admin",
+              level: 1,
+            },{
+              label: "市级管理员",
+              value: "city-admin",
+              level: 2,
+            },{
+              label: "区县级管理员",
+              value: "country-admin",
+              level: 3,
+            }
+          ],
         }
       },
       created() {
@@ -150,6 +228,14 @@
       methods: {
         initData() {
           getUserProfile().then(response => {
+
+            this.currentUser.username = response.data.userName;
+            this.currentUser.role = response.data.roles[0].roleKey;
+            this.currentUser.province = response.data.province;
+            this.currentUser.city = response.data.city;
+            this.currentUser.district = response.data.district;
+            this.currentUser.level = response.data.level;
+
             const lev = response.data.level;
             let reg = "";
             this.queryParams.province = response.data.province;
@@ -204,20 +290,54 @@
           this.points[index].animation = "BMAP_ANIMATION_BOUNCE";
         },
         // 详情
-        async detailRow(index, row) {
+        async detailRow(index) {
+          this.form = {};
+
           const rowData = this.points[index];
+
           this.detailItem = rowData;
+
+          this.form.name = "责令整改通知";
+
+          this.form.process = "整改中";
+
+          this.form.createBy = this.currentUser.username;
+
+          this.form.markId = this.detailItem.markId;
+
           this.detailDialogVisible = true;
-          // console.log(this.detailItem);
         },
-        // 整改
-        async reformRow(index, row) {
-          alert(index);
+
+        submitRectifyForm() {
+          this.$refs["form"].validate(valid => {
+            if (valid) {
+
+                if(this.form.receiverRole === "country-admin") this.form.receiverLevel = 3;
+                else if(this.form.receiverRole === "city-admin") this.form.receiverLevel = 2;
+                else if(this.form.receiverRole === "province-admin") this.form.receiverLevel = 1;
+
+                addActivity(this.form).then(response => {
+                  this.$modal.msgSuccess("新增成功");
+                  this.showTable = false;
+                  this.detailDialogVisible = false;
+
+                  this.markForm = {};
+                  this.markForm.markId = this.form.markId;
+                  this.markForm.process = this.form.process;
+
+                  // console.log(this.markForm);
+
+                  updateMark(this.markForm).then(response => {
+                    this.$modal.msgSuccess("监测点进程更新成功");
+                    this.initData();
+                    this.showTable = false;
+                  });
+                });
+              }
+
+          });
         },
-        openReformDialog(row) {
-          this.reformDialogVisible = true;
-          alert(row);
-        }
+
       }
     }
 
