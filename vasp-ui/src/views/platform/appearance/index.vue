@@ -21,31 +21,26 @@
                     {{ scope.row.markId }}
                   </template>
                 </el-table-column>
-
                 <el-table-column label="经度" width="100">
                   <template slot-scope="scope">
                     {{ scope.row.lat }}
                   </template>
                 </el-table-column>
-
                 <el-table-column property="lng" label="纬度" width="100">
                   <template slot-scope="scope">
                     {{ scope.row.lng }}
                   </template>
                 </el-table-column>
-
                 <el-table-column property="lng" label="检测目标" width="90">
                   <template slot-scope="scope">
                     {{ scope.row.target }}
                   </template>
                 </el-table-column>
-
                 <el-table-column property="lng" label="检测日期" width="120">
                   <template slot-scope="scope">
                     {{ scope.row.testTime }}
                   </template>
                 </el-table-column>
-
                 <el-table-column label="操作" width="125">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text" icon="el-icon-reading" @click="detailRow(scope.$index)">
@@ -53,7 +48,6 @@
                     </el-button>
                   </template>
                 </el-table-column>
-
             </el-table>
             <el-pagination
               background
@@ -62,10 +56,7 @@
             </el-pagination>
           </el-card>
         </el-drawer>
-
       <el-dialog title="检测情况" :visible.sync="detailDialogVisible" width="60%">
-
-
         <el-card>
           <el-row>
             <el-col :span="8">
@@ -93,7 +84,6 @@
             <el-form-item label="动态详情" prop="detail">
               <el-input :rows="5" type="textarea" v-model="form.detail" placeholder="请输入动态详情" />
             </el-form-item>
-
             <el-form-item label="接收者角色" prop="receiverRole">
               <el-select v-model="form.receiverRole" placeholder="请选择接收者角色">
                 <el-option
@@ -109,9 +99,7 @@
               <el-input v-model="form.receiverRegion" placeholder="请输入接收者区域" />
             </el-form-item>
           </el-form>
-
         </el-card>
-
         <span slot="footer" class="dialog-footer">
           <el-button @click="detailDialogVisible = false">关闭</el-button>
           <el-button type="primary" @click="submitRectifyForm">整改</el-button>
@@ -140,7 +128,7 @@
           drawerTitle: "",
           center: null,
           points: null,
-
+          // 获取当前用户信息
           currentUser: {
             username: "",
             role: "",
@@ -150,7 +138,6 @@
             level: null,
             region: "",
           },
-
           // 获取未整改监测点
           form: {},
           queryParams: {
@@ -262,8 +249,7 @@
             });
             res.then(ress => {
               this.center = ress.result.location;
-            })
-            // console.log(this.queryParams.province, this.queryParams.city, this.queryParams.district);
+            });
 
             listMark(this.queryParams).then(response => {
               this.points = response.rows;
@@ -271,7 +257,6 @@
               for(let i = 0; i < this.total; i++) {
                 this.points[i].animation = "";
               }
-              // console.log(this.points);
             });
           });
         },
@@ -311,7 +296,6 @@
         submitRectifyForm() {
           this.$refs["form"].validate(valid => {
             if (valid) {
-
                 if(this.form.receiverRole === "country-admin") this.form.receiverLevel = 3;
                 else if(this.form.receiverRole === "city-admin") this.form.receiverLevel = 2;
                 else if(this.form.receiverRole === "province-admin") this.form.receiverLevel = 1;
@@ -325,8 +309,6 @@
                   this.markForm.markId = this.form.markId;
                   this.markForm.process = this.form.process;
 
-                  // console.log(this.markForm);
-
                   updateMark(this.markForm).then(response => {
                     this.$modal.msgSuccess("监测点进程更新成功");
                     this.initData();
@@ -334,10 +316,8 @@
                   });
                 });
               }
-
           });
         },
-
       }
     }
 
