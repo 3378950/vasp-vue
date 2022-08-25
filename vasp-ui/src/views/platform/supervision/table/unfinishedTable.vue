@@ -60,9 +60,11 @@
       </el-table-column>
     </el-table>
     <el-pagination
-      background
-      layout="prev, pager, next"
-      :total="unFinishedPoints.length">
+      v-show="unFinishedPoints.length > 0"
+      :page.sync="queryParams.pageNum"
+      :limit.sync="queryParams.pageSize"
+      :total="unFinishedPoints.length"
+      @pagination="getUnfinishedMarkList">
     </el-pagination>
 
     <el-dialog title="整改详情" :visible.sync="detailVisible" width="60%">
@@ -178,7 +180,7 @@
             },
             queryParams: {
               pageNum: 1,
-              pageSize: 10,
+              pageSize: 20,
               markId: null,
               lng: null,
               lat: null,

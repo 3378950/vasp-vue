@@ -64,9 +64,11 @@
       </el-table-column>
     </el-table>
     <el-pagination
-      background
-      layout="prev, pager, next"
-      :total="finishedPoints.length">
+      v-show="finishedPoints.length > 0"
+      :page.sync="queryParams.pageNum"
+      :limit.sync="queryParams.pageSize"
+      :total="finishedPoints.length"
+      @pagination="getFinishedMarkList">
     </el-pagination>
 
     <el-dialog title="整改详情" :visible.sync="detailVisible" width="60%">
