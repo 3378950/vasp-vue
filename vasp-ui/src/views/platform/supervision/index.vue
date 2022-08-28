@@ -6,21 +6,23 @@
       </el-col>
 
       <el-col :span="6" class="card-box">
-
         <el-card>
           <div slot="header"><span>办件箱</span></div>
+          <!-- 整改通知 -->
           <el-col :span="8">
             <demand></demand>
           </el-col>
+          <!-- 反馈通知 -->
           <el-col :span="8">
             <feedback></feedback>
           </el-col>
+          <!-- 反馈未通过 -->
           <el-col :span="8">
             <refused></refused>
           </el-col>
         </el-card>
       </el-col>
-
+      <!-- 公告栏-->
       <el-col :span="6" class="card-box">
         <post></post>
       </el-col>

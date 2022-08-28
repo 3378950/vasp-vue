@@ -82,6 +82,40 @@
         </el-table>
       </el-drawer>
 
+      <el-dialog title="反馈未通过" :visible.sync="refusedDialogVisible" width="60%">
+        <el-card>
+          <el-row>
+            <el-col :span="8">
+              <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 220px; height: 200px"></el-image>
+            </el-col>
+            <el-col :span="16">
+              <el-descriptions title="违规情况" direction="vertical" :column="4" border>
+                <el-descriptions-item label="序号">{{vertifyItem.markId}}</el-descriptions-item>
+                <el-descriptions-item label="经纬度">{ {{vertifyItem.lat}} , {{vertifyItem.lng}} }</el-descriptions-item>
+                <el-descriptions-item label="所属地区" :span="2">{{vertifyItem.province + vertifyItem.city + vertifyItem.district}}</el-descriptions-item>
+                <el-descriptions-item label="检测目标">
+                  <el-tag size="small" type="warning">{{vertifyItem.target}}</el-tag>
+                </el-descriptions-item>
+                <el-descriptions-item label="详细地址">{{vertifyItem.address}}</el-descriptions-item>
+              </el-descriptions>
+            </el-col>
+          </el-row>
+
+          <el-form ref="form" :model="form" label-width="100px" style="padding: 20px">
+
+            <el-form-item label="动态详情" prop="detail">
+              <el-input :rows="5" type="textarea" v-model="form.detail" placeholder="请输入审核意见" />
+            </el-form-item>
+
+          </el-form>
+
+        </el-card>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitVertifyForm">确 定</el-button>
+        </div>
+      </el-dialog>
+
+
     </div>
 </template>
 
@@ -129,6 +163,8 @@
             toVertify: null,
             vertifyItem: {},
             toVertifyDrawerVisible: false,
+
+            refusedDialogVisible: false,
           }
         },
 
@@ -171,11 +207,12 @@
           getUnfinishedMarkList() {
             listMark(this.queryParams).then(response => {
               this.unFinishedPoints = response.rows;
-              this.unfinishedTotal = response.total;
+              // this.unfinishedTotal = response.total;
               // this.demandList = [];
 
               // 增加动态各种信息 & 获取上级通知整改的列表
-              for(let i = 0; i < this.unfinishedTotal; i++) {
+              for(let i = 0; i < this.unFinishedPoints.length; i++) {
+                console.log(this.unFinishedPoints[i]);
 
                 const tg = this.unFinishedPoints[i].target;
                 if(tg == "乱搭乱建") this.unFinishedPoints[i].type = "danger";
@@ -199,8 +236,8 @@
               // console.log(this.unFinishedPoints[i]);
               const activitytoRole = this.unFinishedPoints[i].activityList[0].receiverRole;
               const activitytoRegion = this.unFinishedPoints[i].activityList[0].receiverRegion;
-              console.log(activitytoRole, activitytoRegion)
-              console.log(this.currentUser.role, this.currentUser.region)
+              console.log(activitytoRole, activitytoRegion);
+              console.log(this.currentUser.role, this.currentUser.region);
               if(activitytoRole === this.currentUser.role && activitytoRegion === this.currentUser.region) {
                 this.toVertifyList.push(this.unFinishedPoints[i]);
                 this.disable = false;
@@ -209,13 +246,13 @@
             for(let i = 0; i < this.toVertifyList.length; i++) {
               for(let j = 0; j < this.toVertifyList[i].activityList.length; j++) {
                 const act = this.toVertifyList[i].activityList[j];
-                if(act.name == "责令整改通知") {
+                if(act.name === "责令整改通知" || act.name === "反馈未通过") {
                   this.toVertifyList[i].activityList[j].icon = "el-icon-s-release";
                   this.toVertifyList[i].activityList[j].type = "danger";
-                } else if(act.name == "整改反馈") {
+                } else if(act.name === "整改反馈") {
                   this.toVertifyList[i].activityList[j].icon = "el-icon-s-check";
                   this.toVertifyList[i].activityList[j].type = "warning";
-                } else if(act.name == "反馈通过") {
+                } else if(act.name === "反馈通过") {
                   this.toVertifyList[i].activityList[j].icon = "el-icon-s-claim";
                   this.toVertifyList[i].activityList[j].type = "success";
                 }
@@ -250,7 +287,31 @@
           },
 
           handleRefuse(index) {
+            this.reset();
 
+            this.vertifyItem = null;
+            // 获取整改项
+            this.vertifyItem = this.toVertifyList[index];
+
+            // console.log(this.vertifyItem);
+
+            this.form.name = "反馈未通过";
+
+            this.form.process = "整改中";
+
+            this.form.createBy = this.currentUser.username;
+
+            this.form.markId = this.vertifyItem.markId;
+
+            // this.form.detail = "审核通过";
+
+            this.form.receiverRole = "country-admin";
+
+            this.form.receiverRegion = this.vertifyItem.district;
+
+            this.refusedDialogVisible = true;
+
+            // this.submitVertifyForm();
           },
 
           // 表单重置
@@ -284,6 +345,10 @@
               this.markForm.markId = this.form.markId;
               this.markForm.process = this.form.process;
               if(this.form.name === "审核通过") this.markForm.finished = true;
+              else if(this.form.name === "反馈未通过") this.markForm.finished = false;
+
+              this.refusedDialogVisible = false;
+              this.toVertifyDrawerVisible = false;
 
               updateMark(this.markForm).then(response => {
                 // 重新获取未完成的监测点列表

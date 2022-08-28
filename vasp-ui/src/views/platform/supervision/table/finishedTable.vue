@@ -119,6 +119,7 @@
         name: "finishedTable",
         data() {
           return {
+            // TODO: 可通过props方式传参： currentUser、finishedPoints
             currentUser: {
               username: "",
               role: "",
@@ -201,13 +202,13 @@
 
             for(let i = 0; i < this.detailItem.activityList.length; i++) {
               const act = this.detailItem.activityList[i];
-              if(act.name == "责令整改通知") {
+              if(act.name === "责令整改通知" || act.name === "反馈未通过") {
                 this.detailItem.activityList[i].icon = "el-icon-s-release";
                 this.detailItem.activityList[i].type = "danger";
-              } else if(act.name == "整改反馈") {
+              } else if(act.name === "整改反馈") {
                 this.detailItem.activityList[i].icon = "el-icon-s-check";
                 this.detailItem.activityList[i].type = "warning";
-              } else if(act.name == "审核通过") {
+              } else if(act.name === "审核通过") {
                 this.detailItem.activityList[i].icon = "el-icon-s-claim";
                 this.detailItem.activityList[i].type = "success";
               }

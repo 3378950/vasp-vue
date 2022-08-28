@@ -323,11 +323,11 @@
           getUnfinishedMarkList() {
             listMark(this.queryParams).then(response => {
               this.unFinishedPoints = response.rows;
-              this.unfinishedTotal = response.total;
+              // this.unfinishedTotal = response.total;
               // this.demandList = [];
 
               // 增加动态各种信息 & 获取上级通知整改的列表
-              for(let i = 0; i < this.unfinishedTotal; i++) {
+              for(let i = 0; i < this.unFinishedPoints.length; i++) {
 
                 const tg = this.unFinishedPoints[i].target;
                 if(tg == "乱搭乱建") this.unFinishedPoints[i].type = "danger";
@@ -365,13 +365,13 @@
             for(let i = 0; i < this.demandList.length; i++) {
               for(let j = 0; j < this.demandList[i].activityList.length; j++) {
                 const act = this.demandList[i].activityList[j];
-                if(act.name == "责令整改通知") {
+                if(act.name === "责令整改通知" || act.name === "反馈未通过") {
                   this.demandList[i].activityList[j].icon = "el-icon-s-release";
                   this.demandList[i].activityList[j].type = "danger";
-                } else if(act.name == "整改反馈") {
+                } else if(act.name === "整改反馈") {
                   this.demandList[i].activityList[j].icon = "el-icon-s-check";
                   this.demandList[i].activityList[j].type = "warning";
-                } else if(act.name == "反馈通过") {
+                } else if(act.name === "反馈通过") {
                   this.demandList[i].activityList[j].icon = "el-icon-s-claim";
                   this.demandList[i].activityList[j].type = "success";
                 }

@@ -277,15 +277,15 @@
               for(let i = 0; i < this.unFinishedPoints.length; i++) {
 
                 const tg = this.unFinishedPoints[i].target;
-                if(tg == "乱搭乱建") this.unFinishedPoints[i].type = "danger";
-                else if(tg == "乱堆乱放") this.unFinishedPoints[i].type = "warning";
-                else if(tg == "乱贴乱画") this.unFinishedPoints[i].type = "info";
+                if(tg === "乱搭乱建") this.unFinishedPoints[i].type = "danger";
+                else if(tg === "乱堆乱放") this.unFinishedPoints[i].type = "warning";
+                else if(tg === "乱贴乱画") this.unFinishedPoints[i].type = "info";
 
                 const ps = this.unFinishedPoints[i].process;
 
-                if(ps == "未责令整改") this.unFinishedPoints[i].attType = "warning";
-                else if(ps == "整改中") this.unFinishedPoints[i].attType = "";
-                else if(ps == "反馈未通过") this.unFinishedPoints[i].attType = "danger";
+                if(ps === "未责令整改") this.unFinishedPoints[i].attType = "warning";
+                else if(ps === "整改中") this.unFinishedPoints[i].attType = "";
+                else if(ps === "反馈未通过") this.unFinishedPoints[i].attType = "danger";
               }
             });
           },
@@ -318,13 +318,13 @@
 
             for(let i = 0; i < this.detailItem.activityList.length; i++) {
               const act = this.detailItem.activityList[i];
-              if(act.name == "责令整改通知") {
+              if(act.name === "责令整改通知" || act.name === "反馈未通过") {
                 this.detailItem.activityList[i].icon = "el-icon-s-release";
                 this.detailItem.activityList[i].type = "danger";
-              } else if(act.name == "整改反馈") {
+              } else if(act.name === "整改反馈") {
                 this.detailItem.activityList[i].icon = "el-icon-s-check";
                 this.detailItem.activityList[i].type = "warning";
-              } else if(act.name == "反馈通过") {
+              } else if(act.name === "反馈通过") {
                 this.detailItem.activityList[i].icon = "el-icon-s-claim";
                 this.detailItem.activityList[i].type = "success";
               }
