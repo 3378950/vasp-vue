@@ -2,7 +2,7 @@
     <div>
       <el-card class="box-card">
         <div style="color: orangered;">
-          <div>未通过</div>
+          <div>举报信箱</div>
           <span class="number">5</span> <span class="unit">件</span>
           <el-button type="text">立即处理></el-button>
         </div>
