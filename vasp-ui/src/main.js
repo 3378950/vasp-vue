@@ -44,6 +44,8 @@ import DictData from '@/components/DictData'
 // import * as VueJsonp from 'vue-jsonp'
 
 import * as echarts from 'echarts';
+import 'cesium/Widgets/widgets.css'
+
 Vue.prototype.$echarts = echarts;
 
 // 全局方法挂载
