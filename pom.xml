@@ -150,12 +150,6 @@
                 <version>${kaptcha.version}</version>
             </dependency>
 
-            <!-- 定时任务-->
-            <dependency>
-                <groupId>cn.hebau.ai.vasp</groupId>
-                <artifactId>vasp-quartz</artifactId>
-                <version>${vasp.version}</version>
-            </dependency>
 
             <!-- 代码生成-->
             <dependency>
@@ -199,7 +193,6 @@
         <module>vasp-admin</module>
         <module>vasp-framework</module>
         <module>vasp-system</module>
-        <module>vasp-quartz</module>
         <module>vasp-generator</module>
         <module>vasp-common</module>
         <module>vasp-platform</module>

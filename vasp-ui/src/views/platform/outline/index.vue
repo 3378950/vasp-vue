@@ -16,6 +16,7 @@
     methods: {
       show3DTile() {
         var url = 'http://127.0.0.1:5500/3dtile/tileset.json';
+
         // eslint-disable-next-line no-unused-vars
         const viewer = new Cesium.Viewer("cesiumContainer", {
           terrainProvider: Cesium.createWorldTerrain(),
@@ -54,7 +55,7 @@
 <style scoped>
   .map-box {
     width: 100%;
-    height: 100%;
+    height: 1000px;
   }
 
   #cesiumContainer {
