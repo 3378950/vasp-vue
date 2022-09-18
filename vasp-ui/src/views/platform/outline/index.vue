@@ -16,11 +16,20 @@
     methods: {
       show3DTile() {
         var url = 'http://127.0.0.1:5500/3dtile/tileset.json';
-
-        // eslint-disable-next-line no-unused-vars
         const viewer = new Cesium.Viewer("cesiumContainer", {
           terrainProvider: Cesium.createWorldTerrain(),
+          animation: false,
+          timeline: false,
+          baseLayerPicker:false,  //右上角的图层选择按钮
+          geocoder: false,
+          homeButton: false,
+          navigationHelpButton: false,
+          sceneModePicker: false,
+          fullscreenButton:false   //右下角的全屏按钮
         });
+
+        viewer.cesiumWidget.creditContainer.style.display = "none";
+
         window.viewer = viewer;
         // eslint-disable-next-line no-unused-vars
         let tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
