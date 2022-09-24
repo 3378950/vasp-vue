@@ -81,7 +81,14 @@
                           :type="activity.type"
                           :key="index">
           <el-card>
-            {{activity.detail}}
+            <div v-if="activity.name !== '整改反馈'">{{activity.detail}}</div>
+            <div v-else>
+              <el-carousel indicator-position="outside" height="150px">
+                <el-carousel-item v-for="item in 4" :key="item">
+                  <h3>{{ item }}</h3>
+                </el-carousel-item>
+              </el-carousel>
+            </div>
           </el-card>
         </el-timeline-item>
 

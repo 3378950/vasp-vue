@@ -29,7 +29,17 @@
                                   :type="activity.type"
                                   :key="index">
                   <el-card>
-                    {{activity.detail}}
+                    <div v-if="activity.name !== '整改反馈'">{{activity.detail}}</div>
+                    <div v-else-if="activity.imgsList.length">
+                      <el-carousel indicator-position="outside" height="250px">
+                        <el-carousel-item v-for="img in activity.imgsList" :key="item">
+                          <img
+                            :src="'/dev-api' + img"
+                            style="display: block; max-width: 50%; margin: 0 auto"
+                          />
+                        </el-carousel-item>
+                      </el-carousel>
+                    </div>
                   </el-card>
                 </el-timeline-item>
 
@@ -165,6 +175,7 @@
             toVertifyDrawerVisible: false,
 
             refusedDialogVisible: false,
+
           }
         },
 
@@ -250,14 +261,20 @@
                   this.toVertifyList[i].activityList[j].icon = "el-icon-s-release";
                   this.toVertifyList[i].activityList[j].type = "danger";
                 } else if(act.name === "整改反馈") {
+                  if(this.toVertifyList[i].activityList[j].imgs !== null) {
+                    this.toVertifyList[i].activityList[j].imgsList = this.toVertifyList[i].activityList[j].imgs.split(',');
+                  }
                   this.toVertifyList[i].activityList[j].icon = "el-icon-s-check";
                   this.toVertifyList[i].activityList[j].type = "warning";
                 } else if(act.name === "反馈通过") {
                   this.toVertifyList[i].activityList[j].icon = "el-icon-s-claim";
                   this.toVertifyList[i].activityList[j].type = "success";
                 }
+
               }
             }
+            console.log("***", this.toVertifyList);
+
           },
 
           handlePass(index) {

@@ -2,7 +2,6 @@
   <div class="map-box">
     <div id="cesiumContainer"></div>
   </div>
-
 </template>
 
 
@@ -57,6 +56,8 @@
         viewer.camera.setView({
           destination: Cesium.Cartesian3.fromDegrees(-117.16, 32.71, 15000.0)
         });
+
+        viewer.screenSpaceCameraController.enableRotate = false;
       }
     }
   };
