@@ -41,6 +41,8 @@ public class Activity extends BaseEntity
 
     private String receiverLevel;
 
+    private String imgs;
+
     public void setActivityId(Long activityId)
     {
         this.activityId = activityId;
@@ -111,6 +113,14 @@ public class Activity extends BaseEntity
         this.receiverLevel = receiverLevel;
     }
 
+    public String getImgs() {
+        return imgs;
+    }
+
+    public void setImgs(String imgs) {
+        this.imgs = imgs;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -124,6 +134,7 @@ public class Activity extends BaseEntity
                 .append("receiverRole", getReceiverRole())
                 .append("receiverRegion", getReceiverRegion())
                 .append("receiverLevel", getReceiverLevel())
+                .append("imgs", getImgs())
                 .toString();
     }
 }

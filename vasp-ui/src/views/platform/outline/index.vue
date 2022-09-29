@@ -14,7 +14,7 @@
     ,
     methods: {
       show3DTile() {
-        var url = 'http://127.0.0.1:5500/3dtile/tileset.json';
+        const url = 'http://127.0.0.1:5500/3dtile/tileset.json';
         const viewer = new Cesium.Viewer("cesiumContainer", {
           terrainProvider: Cesium.createWorldTerrain(),
           animation: false,
@@ -22,7 +22,7 @@
           baseLayerPicker:false,  //右上角的图层选择按钮
           geocoder: false,
           homeButton: false,
-          navigationHelpButton: false,
+          navigationHelpButton: true,
           sceneModePicker: false,
           fullscreenButton:false   //右下角的全屏按钮
         });

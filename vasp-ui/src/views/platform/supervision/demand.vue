@@ -163,10 +163,10 @@
              <el-input  :disabled="true" v-model="form.markId" :placeholder="form.markId" />
            </el-form-item>
 
-           <el-row>
+           <el-row type="flex">
              <el-col :span="12">
                 <el-form-item label="动态详情" prop="detail">
-                    <el-input :rows="5" type="textarea" v-model="form.detail" placeholder="请输入动态详情" />
+                    <el-input :rows="8" type="textarea" v-model="form.detail" placeholder="请输入动态详情" />
                 </el-form-item>
              </el-col>
              <el-col :span="12">
@@ -406,15 +406,15 @@
               for(let i = 0; i < this.unFinishedPoints.length; i++) {
 
                 const tg = this.unFinishedPoints[i].target;
-                if(tg == "乱搭乱建") this.unFinishedPoints[i].type = "danger";
-                else if(tg == "乱堆乱放") this.unFinishedPoints[i].type = "warning";
-                else if(tg == "乱贴乱画") this.unFinishedPoints[i].type = "info";
+                if(tg === "乱搭乱建") this.unFinishedPoints[i].type = "danger";
+                else if(tg === "乱堆乱放") this.unFinishedPoints[i].type = "warning";
+                else if(tg === "乱贴乱画") this.unFinishedPoints[i].type = "info";
 
                 const ps = this.unFinishedPoints[i].process;
 
-                if(ps == "未责令整改") this.unFinishedPoints[i].attType = "warning";
-                else if(ps == "整改中") this.unFinishedPoints[i].attType = "";
-                else if(ps == "反馈未通过") this.unFinishedPoints[i].attType = "danger";
+                if(ps === "未责令整改") this.unFinishedPoints[i].attType = "warning";
+                else if(ps === "整改中") this.unFinishedPoints[i].attType = "";
+                else if(ps === "反馈未通过") this.unFinishedPoints[i].attType = "danger";
               }
               this.getDemandList();
             });
@@ -425,6 +425,7 @@
             // 获取上级通知整改的列表
             for(let i = 0; i < this.unFinishedPoints.length; i++) {
               if(this.unFinishedPoints[i].process === "待审核") continue;
+              if(this.unFinishedPoints[i].process === "未责令整改") continue;
               for(let j = 0; j < this.unFinishedPoints[i].activityList.length; j++) {
                 const activitytoRole = this.unFinishedPoints[i].activityList[j].receiverRole;
                 const activitytoRegion = this.unFinishedPoints[i].activityList[j].receiverRegion;
@@ -661,4 +662,11 @@
   .unit {
     font-size: 13px;
   }
+  /deep/ .el-upload{
+    width: 100%;
+  }
+  /deep/ .el-upload .el-upload-dragger{
+    width: 100%;
+  }
+
 </style>
