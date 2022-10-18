@@ -14,7 +14,9 @@
     ,
     methods: {
       show3DTile() {
-        const url = 'http://127.0.0.1:5500/3dtile/tileset.json';
+        const url = 'http://124.70.58.35/asset/3dtile/tileset.json';
+        // const url = 'http://127.0.0.1:5500/3dtile/tileset.json';
+
         const viewer = new Cesium.Viewer("cesiumContainer", {
           terrainProvider: Cesium.createWorldTerrain(),
           animation: false,
@@ -22,9 +24,10 @@
           baseLayerPicker:false,  //右上角的图层选择按钮
           geocoder: false,
           homeButton: false,
-          navigationHelpButton: true,
+          navigationHelpButton: false,
           sceneModePicker: false,
-          fullscreenButton:false   //右下角的全屏按钮
+          fullscreenButton:false,    //右下角的全屏按钮
+          infoBox: false,
         });
 
         viewer.cesiumWidget.creditContainer.style.display = "none";
@@ -54,10 +57,35 @@
         }));
         window.viewer.flyTo(tileset)
         viewer.camera.setView({
-          destination: Cesium.Cartesian3.fromDegrees(-117.16, 32.71, 15000.0)
+          //116.172743纬度:39.052697
+          destination: Cesium.Cartesian3.fromDegrees(116.172743, 39.052697, 15000.0)
         });
 
-        viewer.screenSpaceCameraController.enableRotate = false;
+        viewer.dataSources
+          .add(
+            Cesium.GpxDataSource.load("https://sandcastle.cesium.com/SampleData/gpx/wpt.gpx", {
+              clampToGround: true,
+            })
+          )
+          .then(function (dataSource) {
+            viewer.flyTo(dataSource.entities);
+          });
+        viewer.entities.add({
+          position: Cesium.Cartesian3.fromDegrees(116.175353,39.049825, 10),
+          point: {
+            show: true, // default
+            color: Cesium.Color.RED, // default: WHITE
+            pixelSize: 10, // default: 1
+            outlineWidth: 3, // default: 0
+            translucencyByDistance: new Cesium.NearFarScalar(
+              1.5e2,
+              1.0,
+              1.5e7,
+              0.2
+            ),
+          },
+        });
+
       }
     }
   };

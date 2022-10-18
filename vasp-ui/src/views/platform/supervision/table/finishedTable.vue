@@ -82,10 +82,13 @@
                           :key="index">
           <el-card>
             <div v-if="activity.name !== '整改反馈'">{{activity.detail}}</div>
-            <div v-else>
-              <el-carousel indicator-position="outside" height="150px">
-                <el-carousel-item v-for="item in 4" :key="item">
-                  <h3>{{ item }}</h3>
+            <div v-else-if="activity.imgsList.length">
+              <el-carousel indicator-position="outside" height="250px">
+                <el-carousel-item v-for="img in activity.imgsList" :key="item">
+                  <img
+                    :src="suffix + img"
+                    style="display: block; max-width: 50%; margin: 0 auto"
+                  />
                 </el-carousel-item>
               </el-carousel>
             </div>
@@ -126,6 +129,8 @@
         name: "finishedTable",
         data() {
           return {
+            suffix: process.env.VUE_APP_BASE_API,
+
             // TODO: 可通过props方式传参： currentUser、finishedPoints
             currentUser: {
               username: "",
@@ -215,6 +220,7 @@
               } else if(act.name === "整改反馈") {
                 this.detailItem.activityList[i].icon = "el-icon-s-check";
                 this.detailItem.activityList[i].type = "warning";
+                this.detailItem.activityList[i].imgsList = this.detailItem.activityList[i].imgs.split(',');
               } else if(act.name === "审核通过") {
                 this.detailItem.activityList[i].icon = "el-icon-s-claim";
                 this.detailItem.activityList[i].type = "success";

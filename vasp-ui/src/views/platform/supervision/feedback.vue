@@ -34,7 +34,7 @@
                       <el-carousel indicator-position="outside" height="250px">
                         <el-carousel-item v-for="img in activity.imgsList" :key="item">
                           <img
-                            :src="'/dev-api' + img"
+                            :src="suffix + img"
                             style="display: block; max-width: 50%; margin: 0 auto"
                           />
                         </el-carousel-item>
@@ -133,11 +133,11 @@
     import {getUserProfile} from "../../../api/system/user";
     import {listMark, updateMark} from "../../../api/platform/mark";
     import {addActivity, updateActivity} from "../../../api/platform/activity";
-
     export default {
         name: "feedback",
         data() {
           return {
+            suffix: process.env.VUE_APP_BASE_API,
             currentUser: {
               username: "",
               role: "",
@@ -273,8 +273,6 @@
 
               }
             }
-            console.log("***", this.toVertifyList);
-
           },
 
           handlePass(index) {

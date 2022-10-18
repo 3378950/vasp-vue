@@ -77,7 +77,17 @@
                           :type="activity.type"
                           :key="index">
           <el-card>
-            {{activity.detail}}
+            <div v-if="activity.name !== '整改反馈'">{{activity.detail}}</div>
+            <div v-else-if="activity.imgsList.length">
+              <el-carousel indicator-position="outside" height="250px">
+                <el-carousel-item v-for="img in activity.imgsList" :key="item">
+                  <img
+                    :src="suffix + img"
+                    style="display: block; max-width: 50%; margin: 0 auto"
+                  />
+                </el-carousel-item>
+              </el-carousel>
+            </div>
           </el-card>
         </el-timeline-item>
 
@@ -169,6 +179,8 @@
         name: "unfinishedTable",
         data() {
           return {
+            suffix: process.env.VUE_APP_BASE_API,
+
             currentUser: {
               username: "",
               role: "",
@@ -324,6 +336,8 @@
               } else if(act.name === "整改反馈") {
                 this.detailItem.activityList[i].icon = "el-icon-s-check";
                 this.detailItem.activityList[i].type = "warning";
+                this.detailItem.activityList[i].imgsList = this.detailItem.activityList[i].imgs.split(',');
+
               } else if(act.name === "反馈通过") {
                 this.detailItem.activityList[i].icon = "el-icon-s-claim";
                 this.detailItem.activityList[i].type = "success";
