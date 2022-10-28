@@ -71,6 +71,9 @@ public class Mark extends BaseEntity
     @Excel(name = "整改进程")
     private String process;
 
+    @Excel(name = "图片")
+    private String img;
+
     /** 整改动态信息 */
     private List<Activity> activityList;
 
@@ -198,6 +201,14 @@ public class Mark extends BaseEntity
         this.activityList = activityList;
     }
 
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -214,6 +225,7 @@ public class Mark extends BaseEntity
                 .append("animation", getAnimation())
                 .append("finished", getFinished())
                 .append("process", getProcess())
+                .append("img", getImg())
                 .append("activityList", getActivityList())
                 .toString();
     }

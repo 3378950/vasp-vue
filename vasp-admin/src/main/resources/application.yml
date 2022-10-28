@@ -10,6 +10,7 @@ vasp:
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
   profile: D:/Personal File/code/dev/Vasp-Vue/uploadPath
+#  profile: C:/Projects/vasp/uploadPath
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证

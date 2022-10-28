@@ -45,11 +45,14 @@
                <el-timeline-item :timestamp="props.row.testTime + ' ' + '发现违章点'" placement="top" size="large" icon="el-icon-warning" type="warning">
                  <el-card>
                    <el-row>
-                     <el-col :span="8">
-                       <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 220px; height: 200px"></el-image>
+                     <el-col :span="6">
+                       <img
+                         :src="suffix + props.row.img"
+                         style="width: 160px; height: 168px"
+                       />
                      </el-col>
-                     <el-col :span="16">
-                       <el-descriptions title="违规情况" direction="vertical" :column="4" border>
+                     <el-col :span="18">
+                       <el-descriptions direction="vertical" :column="4" border>
                          <el-descriptions-item label="序号">{{props.row.markId}}</el-descriptions-item>
                          <el-descriptions-item label="经纬度">{ {{props.row.lat}} , {{props.row.lng}} }</el-descriptions-item>
                          <el-descriptions-item label="所属地区" :span="2">{{props.row.province + props.row.city + props.row.district}}</el-descriptions-item>
@@ -98,10 +101,12 @@
      <el-dialog title="责令整改" :visible.sync="rectifyVisible" width="60%">
        <el-card>
          <el-row>
-           <el-col :span="8">
-             <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 220px; height: 200px"></el-image>
-           </el-col>
-           <el-col :span="16">
+           <el-col :span="6">
+             <img
+               :src="suffix + this.rectifyItem.img"
+               style="width: 160px; height: 168px"
+             />           </el-col>
+           <el-col :span="18">
              <el-descriptions title="违规情况" direction="vertical" :column="4" border>
                <el-descriptions-item label="序号">{{rectifyItem.markId}}</el-descriptions-item>
                <el-descriptions-item label="经纬度">{ {{rectifyItem.lat}} , {{rectifyItem.lng}} }</el-descriptions-item>
@@ -150,11 +155,13 @@
      <el-dialog title="整改反馈" :visible.sync="feedbackVisible" width="60%">
        <el-card>
          <el-row>
-           <el-col :span="8">
-             <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 220px; height: 200px"></el-image>
-           </el-col>
-           <el-col :span="16">
-             <el-descriptions title="违规情况" direction="vertical" :column="4" border>
+           <el-col :span="6">
+             <img
+               :src="suffix + this.feedbackItem.img"
+               style="width: 160px; height: 168px"
+             />           </el-col>
+           <el-col :span="18">
+             <el-descriptions direction="vertical" :column="4" border>
                <el-descriptions-item label="序号">{{feedbackItem.markId}}</el-descriptions-item>
                <el-descriptions-item label="经纬度">{ {{feedbackItem.lat}} , {{feedbackItem.lng}} }</el-descriptions-item>
                <el-descriptions-item label="所属地区" :span="2">{{feedbackItem.province + feedbackItem.city + feedbackItem.district}}</el-descriptions-item>

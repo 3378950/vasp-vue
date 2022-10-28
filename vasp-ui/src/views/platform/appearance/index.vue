@@ -59,11 +59,14 @@
       <el-dialog title="检测情况" :visible.sync="detailDialogVisible" width="60%">
         <el-card>
           <el-row>
-            <el-col :span="8">
-              <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 250px; height: 200px"></el-image>
+            <el-col :span="6">
+              <img
+                :src="suffix + this.detailItem.img"
+                style="width: 160px; height: 168px"
+              />
             </el-col>
-            <el-col :span="16">
-              <el-descriptions title="违规情况" direction="vertical" :column="4" border>
+            <el-col :span="18">
+              <el-descriptions direction="vertical" :column="4" border>
                 <el-descriptions-item label="序号">{{detailItem.markId}}</el-descriptions-item>
                 <el-descriptions-item label="经纬度">{ {{detailItem.lng}} , {{detailItem.lat}} }</el-descriptions-item>
                 <el-descriptions-item label="所属地区" :span="2">{{detailItem.province + detailItem.city + detailItem.district}}</el-descriptions-item>
@@ -120,6 +123,7 @@
       name: "index",
       data() {
         return {
+          suffix: process.env.VUE_APP_BASE_API,
           mapZoomLevel: null,
           showTable: true,
           areaName: "",
