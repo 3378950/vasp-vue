@@ -7,15 +7,15 @@
 
 <script>
   export default {
-    name: "",
+    name: "outline",
     mounted() {
       this.show3DTile();
     }
     ,
     methods: {
       show3DTile() {
-        const url = 'http://124.70.58.35/asset/3dtile/tileset.json';
-        // const url = 'http://127.0.0.1:5500/3dtile/tileset.json';
+        // const url = 'http://124.70.58.35/asset/3dtile/tileset.json';
+        const url = 'http://127.0.0.1:5500/3dtile/tileset.json';
 
         const viewer = new Cesium.Viewer("cesiumContainer", {
           terrainProvider: Cesium.createWorldTerrain(),

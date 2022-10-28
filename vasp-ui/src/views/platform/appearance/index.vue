@@ -1,17 +1,21 @@
 <template>
     <div>
-        <!--地图展示  -->
-        <baidu-map class="map" :center="center" :zoom="mapZoomLevel" :scroll-wheel-zoom="true">
-          <bm-boundary :name="areaName" :strokeWeight="3" strokeColor="blue" fill-color="#1890FF" map-types="BMAP_SATELLITE_MAP">
-          </bm-boundary>
-          <template v-for="point in points">
+        <div v-if="this.currentUser.level!=4">
+          <!--地图展示  -->
+          <baidu-map class="map" :center="center" :zoom="mapZoomLevel" :scroll-wheel-zoom="true">
+            <bm-boundary :name="areaName" :strokeWeight="3" strokeColor="blue" fill-color="#1890FF" map-types="BMAP_SATELLITE_MAP">
+            </bm-boundary>
+            <template v-for="point in points">
               <bm-marker v-bind:position="{lat: point.lat, lng: point.lng}"
                          :dragging="false" @click="openDrawer(point)"
                          :animation="point.animation">
               </bm-marker>
-          </template>
-        </baidu-map>
-
+            </template>
+          </baidu-map>
+        </div>
+        <div v-else>
+          <outline></outline>
+        </div>
         <!-- 抽屉表格     -->
         <el-drawer :title="drawerTitle" ref="navDrawer" :visible.sync="showTable" :wrapper-closable=true direction="rtl" size="34%" :modal=false style="top: calc(100% - calc(100% - 50px));" close="currentRow = null">
           <el-card class="box-card">
@@ -56,7 +60,7 @@
             </el-pagination>
           </el-card>
         </el-drawer>
-      <el-dialog title="检测情况" :visible.sync="detailDialogVisible" width="60%">
+        <el-dialog title="检测情况" :visible.sync="detailDialogVisible" width="60%">
         <el-card>
           <el-row>
             <el-col :span="6">
@@ -108,7 +112,6 @@
           <el-button type="primary" @click="submitRectifyForm">整改</el-button>
         </span>
       </el-dialog>
-
     </div>
 </template>
 
@@ -119,8 +122,10 @@
     import { jsonp } from 'vue-jsonp';
     import {getMark, updateMark} from "../../../api/platform/mark";
     import {addActivity, updateActivity} from "../../../api/platform/activity";
+    import Outline from "../outline/index";
     export default {
       name: "index",
+      components: { Outline },
       data() {
         return {
           suffix: process.env.VUE_APP_BASE_API,
@@ -226,6 +231,7 @@
             this.currentUser.city = response.data.city;
             this.currentUser.district = response.data.district;
             this.currentUser.level = response.data.level;
+            console.log(this.currentUser);
 
             const lev = response.data.level;
             let reg = "";
