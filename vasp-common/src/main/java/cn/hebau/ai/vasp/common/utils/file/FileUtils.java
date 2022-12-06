@@ -16,7 +16,7 @@ import cn.hebau.ai.vasp.common.utils.DateUtils;
 import cn.hebau.ai.vasp.common.utils.StringUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import cn.hebau.ai.vasp.common.config.RuoYiConfig;
+import cn.hebau.ai.vasp.common.config.VaspConfig;
 import cn.hebau.ai.vasp.common.utils.uuid.IdUtils;
 import org.apache.commons.io.FilenameUtils;
 
@@ -74,7 +74,7 @@ public class FileUtils
      */
     public static String writeImportBytes(byte[] data) throws IOException
     {
-        return writeBytes(data, RuoYiConfig.getImportPath());
+        return writeBytes(data, VaspConfig.getImportPath());
     }
 
     /**

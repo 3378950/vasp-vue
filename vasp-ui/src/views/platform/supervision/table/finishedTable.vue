@@ -81,18 +81,31 @@
                           :type="activity.type"
                           :key="index">
           <el-card>
-            {{activity.detail}}
+            <div v-if="activity.name !== '整改反馈'">{{activity.detail}}</div>
+            <div v-else-if="activity.imgsList.length">
+              <el-carousel indicator-position="outside" height="250px">
+                <el-carousel-item v-for="img in activity.imgsList" :key="item">
+                  <img
+                    :src="suffix + img"
+                    style="display: block; max-width: 50%; margin: 0 auto"
+                  />
+                </el-carousel-item>
+              </el-carousel>
+            </div>
           </el-card>
         </el-timeline-item>
 
         <el-timeline-item :timestamp="detailItem.testTime + ' ' + '发现违章点'" placement="top" size="large" icon="el-icon-warning" type="warning">
           <el-card>
             <el-row>
-              <el-col :span="8">
-                <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 220px; height: 200px"></el-image>
+              <el-col :span="6">
+                <img
+                  :src="suffix + this.detailItem.img"
+                  style="width: 160px; height: 168px"
+                />
               </el-col>
-              <el-col :span="16">
-                <el-descriptions title="违规情况" direction="vertical" :column="4" border>
+              <el-col :span="18">
+                <el-descriptions direction="vertical" :column="4" border>
                   <el-descriptions-item label="序号">{{detailItem.markId}}</el-descriptions-item>
                   <el-descriptions-item label="经纬度">{ {{detailItem.lat}} , {{detailItem.lng}} }</el-descriptions-item>
                   <el-descriptions-item label="所属地区" :span="2">{{detailItem.province + detailItem.city + detailItem.district}}</el-descriptions-item>
@@ -119,6 +132,8 @@
         name: "finishedTable",
         data() {
           return {
+            suffix: process.env.VUE_APP_BASE_API,
+
             // TODO: 可通过props方式传参： currentUser、finishedPoints
             currentUser: {
               username: "",
@@ -208,6 +223,7 @@
               } else if(act.name === "整改反馈") {
                 this.detailItem.activityList[i].icon = "el-icon-s-check";
                 this.detailItem.activityList[i].type = "warning";
+                this.detailItem.activityList[i].imgsList = this.detailItem.activityList[i].imgs.split(',');
               } else if(act.name === "审核通过") {
                 this.detailItem.activityList[i].icon = "el-icon-s-claim";
                 this.detailItem.activityList[i].type = "success";

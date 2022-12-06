@@ -15,12 +15,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="receiverRole"    column="receiver_role"    />
         <result property="receiverRegion"    column="receiver_region" />
         <result property="receiverLevel"    column="receiver_level"    />
+        <result property="imgs"    column="imgs"    />
 
     </resultMap>
 
 
     <sql id="selectActivityVo">
-        select activity_id, name, mark_id, detail, process, create_time, create_by, receiver_role, receiver_region, receiver_level  from plt_activity
+        select activity_id, name, mark_id, detail, process, create_time, create_by, receiver_role, receiver_region, receiver_level, imgs  from plt_activity
     </sql>
 
     <select id="selectActivityList" parameterType="Activity" resultMap="ActivityResult">
@@ -36,6 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="receiverRole != null  and receiverRole != ''"> and receiverRole = #{receiverRole}</if>
             <if test="receiverRegion != null  and receiverRegion != ''"> and receiverRegion = #{receiverRegion}</if>
             <if test="receiverLevel != null  and receiverLevel != ''"> and receiverLevel = #{receiverLevel}</if>
+            <if test="imgs != null  and imgs != ''"> and imgs = #{imgs}</if>
         </where>
     </select>
     
@@ -61,6 +63,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="receiverRole != null and receiverRole != ''">receiver_role,</if>
             <if test="receiverRegion != null and receiverRegion != ''">receiver_region,</if>
             <if test="receiverLevel != null and receiverLevel != ''">receiver_level,</if>
+            <if test="imgs != null and imgs != ''">imgs,</if>
+
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null and name != ''">#{name},</if>
@@ -72,6 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="receiverRole != null and receiverRole != ''">#{receiverRole},</if>
             <if test="receiverRegion != null and receiverRegion != ''">#{receiverRegion},</if>
             <if test="receiverLevel != null and receiverLevel != ''">#{receiverLevel},</if>
+            <if test="imgs != null and imgs != ''">#{imgs},</if>
         </trim>
     </insert>
 
@@ -87,6 +92,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="receiverRole != null and receiverRole != ''">receiver_role = #{receiverRole},</if>
             <if test="receiverRegion != null and receiverRegion != ''">receiver_region = #{receiverRegion},</if>
             <if test="receiverLevel != null and receiverLevel != ''">receiver_level = #{receiverLevel},</if>
+            <if test="imgs != null and imgs != ''">imgs = #{imgs},</if>
         </trim>
         where activity_id = #{activityId}
     </update>

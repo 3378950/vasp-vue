@@ -3,15 +3,7 @@
     <div style="float: left;line-height: 46px; font-size: 20px; left: auto; margin-left: 20px; color: white; vertical-align: middle;">全域多级村容村貌大数据监管平台</div>
     <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" style="color: white;" @toggleClick="toggleSideBar" />
     <div class="right-menu">
-<!--      <i class="el-icon-message-solid"></i>-->
         欢迎 {{userRole}} ：{{username}}
-      <!--          <div style="color: white; font-size: 13px">-->
-      <!--            当前用户角色：-->
-      <!--            {{userRole}}-->
-      <!--          </div>-->
-      <!--          <i class="el-icon-switch-button" />-->
-
-
       <el-dropdown class="avatar-container right-menu-item hover-effect">
         <div class="avatar-wrapper">
             <img :src="avatar" class="user-avatar">
@@ -21,9 +13,7 @@
           <router-link to="/user/profile">
             <el-dropdown-item>个人中心</el-dropdown-item>
           </router-link>
-          <el-dropdown-item @click.native="setting = true">
-            <span>布局设置</span>
-          </el-dropdown-item>
+
           <el-dropdown-item divided @click.native="logout">
             <span>退出登录</span>
           </el-dropdown-item>

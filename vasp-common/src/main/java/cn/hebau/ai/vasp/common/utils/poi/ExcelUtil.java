@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
-import cn.hebau.ai.vasp.common.config.RuoYiConfig;
+import cn.hebau.ai.vasp.common.config.VaspConfig;
 import cn.hebau.ai.vasp.common.core.domain.AjaxResult;
 import cn.hebau.ai.vasp.common.core.text.Convert;
 import cn.hebau.ai.vasp.common.utils.DateUtils;
@@ -1098,7 +1098,7 @@ public class ExcelUtil<T>
      */
     public String getAbsoluteFile(String filename)
     {
-        String downloadPath = RuoYiConfig.getDownloadPath() + filename;
+        String downloadPath = VaspConfig.getDownloadPath() + filename;
         File desc = new File(downloadPath);
         if (!desc.getParentFile().exists())
         {

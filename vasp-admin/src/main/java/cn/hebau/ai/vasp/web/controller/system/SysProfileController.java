@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import cn.hebau.ai.vasp.common.annotation.Log;
-import cn.hebau.ai.vasp.common.config.RuoYiConfig;
+import cn.hebau.ai.vasp.common.config.VaspConfig;
 import cn.hebau.ai.vasp.common.constant.UserConstants;
 import cn.hebau.ai.vasp.common.core.controller.BaseController;
 import cn.hebau.ai.vasp.common.core.domain.AjaxResult;
@@ -126,7 +126,7 @@ public class SysProfileController extends BaseController
         if (!file.isEmpty())
         {
             LoginUser loginUser = getLoginUser();
-            String avatar = FileUploadUtils.upload(RuoYiConfig.getAvatarPath(), file, MimeTypeUtils.IMAGE_EXTENSION);
+            String avatar = FileUploadUtils.upload(VaspConfig.getAvatarPath(), file, MimeTypeUtils.IMAGE_EXTENSION);
             if (userService.updateUserAvatar(loginUser.getUsername(), avatar))
             {
                 AjaxResult ajax = AjaxResult.success();

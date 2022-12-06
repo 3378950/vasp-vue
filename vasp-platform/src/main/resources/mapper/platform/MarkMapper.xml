@@ -17,6 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="animation"    column="animation"    />
         <result property="finished"    column="finished"    />
         <result property="process"    column="process"    />
+        <result property="img"    column="img"    />
     </resultMap>
 
     <resultMap id="MarkActivityResult" type="Mark" extends="MarkResult">
@@ -33,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMarkVo">
-        select mark_id, lng, lat, province, city, district , target, address, test_time, animation, finished, process from plt_mark
+        select mark_id, lng, lat, province, city, district , target, address, test_time, animation, finished, process, img from plt_mark
     </sql>
 
     <select id="selectMarkList" parameterType="Mark" resultMap="MarkResult">
@@ -51,6 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="animation != null  and animation != ''"> and animation = #{animation}</if>
             <if test="finished != null"> and finished = #{finished}</if>
             <if test="process != null and process != ''"> and process = #{process}</if>
+            <if test="img != null and img != ''"> and img = #{img}</if>
         </where>
     </select>
 

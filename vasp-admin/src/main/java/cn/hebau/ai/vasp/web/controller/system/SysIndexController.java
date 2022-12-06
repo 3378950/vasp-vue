@@ -3,7 +3,7 @@ package cn.hebau.ai.vasp.web.controller.system;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import cn.hebau.ai.vasp.common.config.RuoYiConfig;
+import cn.hebau.ai.vasp.common.config.VaspConfig;
 import cn.hebau.ai.vasp.common.utils.StringUtils;
 
 /**
@@ -16,7 +16,7 @@ public class SysIndexController
 {
     /** 系统基础配置 */
     @Autowired
-    private RuoYiConfig ruoyiConfig;
+    private VaspConfig ruoyiConfig;
 
     /**
      * 访问首页，提示语

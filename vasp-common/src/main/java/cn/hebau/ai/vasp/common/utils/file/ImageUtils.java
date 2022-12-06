@@ -11,7 +11,7 @@ import cn.hebau.ai.vasp.common.utils.StringUtils;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import cn.hebau.ai.vasp.common.config.RuoYiConfig;
+import cn.hebau.ai.vasp.common.config.VaspConfig;
 import cn.hebau.ai.vasp.common.constant.Constants;
 
 /**
@@ -80,7 +80,7 @@ public class ImageUtils
             else
             {
                 // 本机地址
-                String localPath = RuoYiConfig.getProfile();
+                String localPath = VaspConfig.getProfile();
                 String downloadPath = localPath + StringUtils.substringAfter(url, Constants.RESOURCE_PREFIX);
                 in = new FileInputStream(downloadPath);
             }

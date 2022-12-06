@@ -28,18 +28,31 @@
                                  :type="activity.type"
                                  :key="index">
                  <el-card>
-                   {{activity.detail}}
+                   <div v-if="activity.name !== '整改反馈'">{{activity.detail}}</div>
+                   <div v-else-if="activity.imgsList.length">
+                     <el-carousel indicator-position="outside" height="250px">
+                       <el-carousel-item v-for="img in activity.imgsList" :key="item">
+                         <img
+                           :src="suffix + img"
+                           style="display: block; max-width: 50%; margin: 0 auto"
+                         />
+                       </el-carousel-item>
+                     </el-carousel>
+                   </div>
                  </el-card>
                </el-timeline-item>
 
                <el-timeline-item :timestamp="props.row.testTime + ' ' + '发现违章点'" placement="top" size="large" icon="el-icon-warning" type="warning">
                  <el-card>
                    <el-row>
-                     <el-col :span="8">
-                       <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 220px; height: 200px"></el-image>
+                     <el-col :span="6">
+                       <img
+                         :src="suffix + props.row.img"
+                         style="width: 160px; height: 168px"
+                       />
                      </el-col>
-                     <el-col :span="16">
-                       <el-descriptions title="违规情况" direction="vertical" :column="4" border>
+                     <el-col :span="18">
+                       <el-descriptions direction="vertical" :column="4" border>
                          <el-descriptions-item label="序号">{{props.row.markId}}</el-descriptions-item>
                          <el-descriptions-item label="经纬度">{ {{props.row.lat}} , {{props.row.lng}} }</el-descriptions-item>
                          <el-descriptions-item label="所属地区" :span="2">{{props.row.province + props.row.city + props.row.district}}</el-descriptions-item>
@@ -88,10 +101,12 @@
      <el-dialog title="责令整改" :visible.sync="rectifyVisible" width="60%">
        <el-card>
          <el-row>
-           <el-col :span="8">
-             <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 220px; height: 200px"></el-image>
-           </el-col>
-           <el-col :span="16">
+           <el-col :span="6">
+             <img
+               :src="suffix + this.rectifyItem.img"
+               style="width: 160px; height: 168px"
+             />           </el-col>
+           <el-col :span="18">
              <el-descriptions title="违规情况" direction="vertical" :column="4" border>
                <el-descriptions-item label="序号">{{rectifyItem.markId}}</el-descriptions-item>
                <el-descriptions-item label="经纬度">{ {{rectifyItem.lat}} , {{rectifyItem.lng}} }</el-descriptions-item>
@@ -140,11 +155,13 @@
      <el-dialog title="整改反馈" :visible.sync="feedbackVisible" width="60%">
        <el-card>
          <el-row>
-           <el-col :span="8">
-             <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 220px; height: 200px"></el-image>
-           </el-col>
-           <el-col :span="16">
-             <el-descriptions title="违规情况" direction="vertical" :column="4" border>
+           <el-col :span="6">
+             <img
+               :src="suffix + this.feedbackItem.img"
+               style="width: 160px; height: 168px"
+             />           </el-col>
+           <el-col :span="18">
+             <el-descriptions direction="vertical" :column="4" border>
                <el-descriptions-item label="序号">{{feedbackItem.markId}}</el-descriptions-item>
                <el-descriptions-item label="经纬度">{ {{feedbackItem.lat}} , {{feedbackItem.lng}} }</el-descriptions-item>
                <el-descriptions-item label="所属地区" :span="2">{{feedbackItem.province + feedbackItem.city + feedbackItem.district}}</el-descriptions-item>
@@ -162,12 +179,55 @@
            <el-form-item label="监测点编号" prop="markId">
              <el-input  :disabled="true" v-model="form.markId" :placeholder="form.markId" />
            </el-form-item>
-           <el-form-item label="动态详情" prop="detail">
-             <el-input :rows="5" type="textarea" v-model="form.detail" placeholder="请输入动态详情" />
-           </el-form-item>
 
-           <el-form-item label="接收者角色" prop="receiverRole">
-             <el-select v-model="form.receiverRole" placeholder="请选择接收者角色">
+           <el-row type="flex">
+             <el-col :span="12">
+                <el-form-item label="动态详情" prop="detail">
+                    <el-input :rows="8" type="textarea" v-model="form.detail" placeholder="请输入动态详情" />
+                </el-form-item>
+             </el-col>
+             <el-col :span="12">
+               <el-form-item label="照片" prop="detail">
+                 <el-upload
+                   multiple
+                   drag
+                   :action="uploadImgUrl"
+                   :on-success="handleUploadSuccess"
+                   :before-upload="handleBeforeUpload"
+                   :limit="limit"
+                   :on-error="handleUploadError"
+                   :on-exceed="handleExceed"
+                   name="file"
+                   :on-remove="handleRemove"
+                   :show-file-list="true"
+                   :headers="headers"
+                   :file-list="fileList"
+                   :on-preview="handlePictureCardPreview"
+                   :class="{hide: this.fileList.length >= this.limit}"
+                 >
+                   <i class="el-icon-upload"></i>
+                   <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                 </el-upload>
+
+                 <el-dialog
+                   :visible.sync="dialogVisible"
+                   title="预览"
+                   width="800"
+                   append-to-body
+                 >
+                   <img
+                     :src="dialogImageUrl"
+                     style="display: block; max-width: 100%; margin: 0 auto"
+                   />
+                 </el-dialog>
+               </el-form-item>
+
+             </el-col>
+           </el-row>
+
+
+           <el-form-item label="接收者角色" prop="receiverRole" style="width: 50%">
+             <el-select v-model="form.receiverRole" placeholder="请选择接收者角色" style="width:100%;">
                <el-option
                  v-for="role in roleList"
                  v-if="currentUser.level > role.level"
@@ -195,11 +255,15 @@
     import {getUserProfile} from "../../../api/system/user";
     import {listMark, updateMark} from "../../../api/platform/mark";
     import {addActivity, updateActivity} from "../../../api/platform/activity";
+    import { getToken } from "@/utils/auth";
+
 
     export default {
         name: "demand",
         data() {
           return {
+            suffix: process.env.VUE_APP_BASE_API,
+
             // 当前用户信息
             currentUser: {
               username: "",
@@ -284,7 +348,38 @@
             feedbackVisible: false,
             // 更新监测点信息表单
             markForm: {},
+
+            // 以下是与上传相关：
+            limit: 3,
+
+            // 大小限制(MB)
+            fileSize: 5,
+
+            // 文件类型, 例如['png', 'jpg', 'jpeg']
+            fileType: ["png", "jpg", "jpeg"],
+
+            // 是否显示提示
+            isShowTip: true,
+
+            number: 0,
+            uploadList: [],
+            dialogImageUrl: "",
+            dialogVisible: false,
+            hideUpload: false,
+            baseUrl: process.env.VUE_APP_BASE_API,
+            uploadImgUrl: process.env.VUE_APP_BASE_API + "/common/upload", // 上传的图片服务器地址
+            headers: {
+              Authorization: "Bearer " + getToken(),
+            },
+            fileList: []
           }
+        },
+
+        computed: {
+          // 是否显示提示
+          showTip() {
+            return this.isShowTip && (this.fileType || this.fileSize);
+          },
         },
         created() {
             this.initData();
@@ -330,15 +425,15 @@
               for(let i = 0; i < this.unFinishedPoints.length; i++) {
 
                 const tg = this.unFinishedPoints[i].target;
-                if(tg == "乱搭乱建") this.unFinishedPoints[i].type = "danger";
-                else if(tg == "乱堆乱放") this.unFinishedPoints[i].type = "warning";
-                else if(tg == "乱贴乱画") this.unFinishedPoints[i].type = "info";
+                if(tg === "乱搭乱建") this.unFinishedPoints[i].type = "danger";
+                else if(tg === "乱堆乱放") this.unFinishedPoints[i].type = "warning";
+                else if(tg === "乱贴乱画") this.unFinishedPoints[i].type = "info";
 
                 const ps = this.unFinishedPoints[i].process;
 
-                if(ps == "未责令整改") this.unFinishedPoints[i].attType = "warning";
-                else if(ps == "整改中") this.unFinishedPoints[i].attType = "";
-                else if(ps == "反馈未通过") this.unFinishedPoints[i].attType = "danger";
+                if(ps === "未责令整改") this.unFinishedPoints[i].attType = "warning";
+                else if(ps === "整改中") this.unFinishedPoints[i].attType = "";
+                else if(ps === "反馈未通过") this.unFinishedPoints[i].attType = "danger";
               }
               this.getDemandList();
             });
@@ -349,6 +444,7 @@
             // 获取上级通知整改的列表
             for(let i = 0; i < this.unFinishedPoints.length; i++) {
               if(this.unFinishedPoints[i].process === "待审核") continue;
+              if(this.unFinishedPoints[i].process === "未责令整改") continue;
               for(let j = 0; j < this.unFinishedPoints[i].activityList.length; j++) {
                 const activitytoRole = this.unFinishedPoints[i].activityList[j].receiverRole;
                 const activitytoRegion = this.unFinishedPoints[i].activityList[j].receiverRegion;
@@ -371,6 +467,8 @@
                 } else if(act.name === "整改反馈") {
                   this.demandList[i].activityList[j].icon = "el-icon-s-check";
                   this.demandList[i].activityList[j].type = "warning";
+                  this.demandList[i].activityList[j].imgsList = this.demandList[i].activityList[j].imgs.split(',');
+
                 } else if(act.name === "反馈通过") {
                   this.demandList[i].activityList[j].icon = "el-icon-s-claim";
                   this.demandList[i].activityList[j].type = "success";
@@ -452,6 +550,18 @@
                     this.initData();
                   });
                 } else {
+                  let imgs = "";
+                  if(this.fileList.length > 0) {
+                    imgs += this.fileList[0].name;
+                    for(let i = 1; i < this.fileList.length; i++) {
+                      imgs += ',';
+                      imgs += this.fileList[i].name;
+                    }
+                  }
+
+                  this.form.imgs = imgs;
+                  console.log(imgs);
+
                   if(this.form.receiverRole === "country-admin") this.form.receiverLevel = 3;
                   else if(this.form.receiverRole === "city-admin") this.form.receiverLevel = 2;
                   else if(this.form.receiverRole === "province-admin") this.form.receiverLevel = 1;
@@ -476,6 +586,81 @@
               }
             });
           },
+          // 删除图片
+          handleRemove(file, fileList) {
+            const findex = this.fileList.map(f => f.name).indexOf(file.name);
+            if(findex > -1) {
+              this.fileList.splice(findex, 1);
+              this.$emit("input", this.listToString(this.fileList));
+            }
+          },
+          // 上传成功回调
+          handleUploadSuccess(res) {
+            this.uploadList.push({ name: res.fileName, url: res.fileName });
+            if (this.uploadList.length === this.number) {
+              this.fileList = this.fileList.concat(this.uploadList);
+              this.uploadList = [];
+              this.number = 0;
+              this.$emit("input", this.listToString(this.fileList));
+              this.$modal.closeLoading();
+            }
+            console.log(this.fileList);
+          },
+          // 上传前loading加载
+          handleBeforeUpload(file) {
+            let isImg = false;
+            if (this.fileType.length) {
+              let fileExtension = "";
+              if (file.name.lastIndexOf(".") > -1) {
+                fileExtension = file.name.slice(file.name.lastIndexOf(".") + 1);
+              }
+              isImg = this.fileType.some(type => {
+                if (file.type.indexOf(type) > -1) return true;
+                if (fileExtension && fileExtension.indexOf(type) > -1) return true;
+                return false;
+              });
+            } else {
+              isImg = file.type.indexOf("image") > -1;
+            }
+
+            if (!isImg) {
+              this.$modal.msgError(`文件格式不正确, 请上传${this.fileType.join("/")}图片格式文件!`);
+              return false;
+            }
+            if (this.fileSize) {
+              const isLt = file.size / 1024 / 1024 < this.fileSize;
+              if (!isLt) {
+                this.$modal.msgError(`上传头像图片大小不能超过 ${this.fileSize} MB!`);
+                return false;
+              }
+            }
+            this.$modal.loading("正在上传图片，请稍候...");
+            this.number++;
+          },
+          // 文件个数超出
+          handleExceed() {
+            this.$modal.msgError(`上传文件数量不能超过 ${this.limit} 个!`);
+          },
+          // 上传失败
+          handleUploadError() {
+            this.$modal.msgError("上传图片失败，请重试");
+            this.$modal.closeLoading();
+          },
+          // 预览
+          handlePictureCardPreview(file) {
+            this.dialogImageUrl = process.env.VUE_APP_BASE_API + file.url;
+            // console.log('-----' + this.dialogImageUrl);
+            this.dialogVisible = true;
+          },
+          // 对象转成指定字符串分隔
+          listToString(list, separator) {
+            let strs = "";
+            separator = separator || ",";
+            for (let i in list) {
+              strs += list[i].url.replace(this.baseUrl, "") + separator;
+            }
+            return strs != '' ? strs.substr(0, strs.length - 1) : '';
+          }
 
         }
     }
@@ -498,4 +683,11 @@
   .unit {
     font-size: 13px;
   }
+  /deep/ .el-upload{
+    width: 100%;
+  }
+  /deep/ .el-upload .el-upload-dragger{
+    width: 100%;
+  }
+
 </style>

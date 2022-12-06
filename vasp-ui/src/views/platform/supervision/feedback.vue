@@ -29,18 +29,30 @@
                                   :type="activity.type"
                                   :key="index">
                   <el-card>
-                    {{activity.detail}}
+                    <div v-if="activity.name !== '整改反馈'">{{activity.detail}}</div>
+                    <div v-else-if="activity.imgsList.length">
+                      <el-carousel indicator-position="outside" height="250px">
+                        <el-carousel-item v-for="img in activity.imgsList" :key="item">
+                          <img
+                            :src="suffix + img"
+                            style="display: block; max-width: 50%; margin: 0 auto"
+                          />
+                        </el-carousel-item>
+                      </el-carousel>
+                    </div>
                   </el-card>
                 </el-timeline-item>
 
                 <el-timeline-item :timestamp="props.row.testTime + ' ' + '发现违章点'" placement="top" size="large" icon="el-icon-warning" type="warning">
                   <el-card>
                     <el-row>
-                      <el-col :span="8">
-                        <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 220px; height: 200px"></el-image>
-                      </el-col>
-                      <el-col :span="16">
-                        <el-descriptions title="违规情况" direction="vertical" :column="4" border>
+                      <el-col :span="6">
+                        <img
+                          :src="suffix + props.row.img"
+                          style="width: 160px; height: 168px"
+                        />                      </el-col>
+                      <el-col :span="18">
+                        <el-descriptions direction="vertical" :column="4" border>
                           <el-descriptions-item label="序号">{{props.row.markId}}</el-descriptions-item>
                           <el-descriptions-item label="经纬度">{ {{props.row.lat}} , {{props.row.lng}} }</el-descriptions-item>
                           <el-descriptions-item label="所属地区" :span="2">{{props.row.province + props.row.city + props.row.district}}</el-descriptions-item>
@@ -85,11 +97,14 @@
       <el-dialog title="反馈未通过" :visible.sync="refusedDialogVisible" width="60%">
         <el-card>
           <el-row>
-            <el-col :span="8">
-              <el-image :src="require('@/assets/images/1.png')" fit="fill" style="width: 220px; height: 200px"></el-image>
+            <el-col :span="6">
+              <img
+                :src="suffix + this.vertifyItem.img"
+                style="width: 160px; height: 168px"
+              />
             </el-col>
-            <el-col :span="16">
-              <el-descriptions title="违规情况" direction="vertical" :column="4" border>
+            <el-col :span="18">
+              <el-descriptions direction="vertical" :column="4" border>
                 <el-descriptions-item label="序号">{{vertifyItem.markId}}</el-descriptions-item>
                 <el-descriptions-item label="经纬度">{ {{vertifyItem.lat}} , {{vertifyItem.lng}} }</el-descriptions-item>
                 <el-descriptions-item label="所属地区" :span="2">{{vertifyItem.province + vertifyItem.city + vertifyItem.district}}</el-descriptions-item>
@@ -123,11 +138,11 @@
     import {getUserProfile} from "../../../api/system/user";
     import {listMark, updateMark} from "../../../api/platform/mark";
     import {addActivity, updateActivity} from "../../../api/platform/activity";
-
     export default {
         name: "feedback",
         data() {
           return {
+            suffix: process.env.VUE_APP_BASE_API,
             currentUser: {
               username: "",
               role: "",
@@ -165,6 +180,7 @@
             toVertifyDrawerVisible: false,
 
             refusedDialogVisible: false,
+
           }
         },
 
@@ -250,12 +266,16 @@
                   this.toVertifyList[i].activityList[j].icon = "el-icon-s-release";
                   this.toVertifyList[i].activityList[j].type = "danger";
                 } else if(act.name === "整改反馈") {
+                  if(this.toVertifyList[i].activityList[j].imgs !== null) {
+                    this.toVertifyList[i].activityList[j].imgsList = this.toVertifyList[i].activityList[j].imgs.split(',');
+                  }
                   this.toVertifyList[i].activityList[j].icon = "el-icon-s-check";
                   this.toVertifyList[i].activityList[j].type = "warning";
                 } else if(act.name === "反馈通过") {
                   this.toVertifyList[i].activityList[j].icon = "el-icon-s-claim";
                   this.toVertifyList[i].activityList[j].type = "success";
                 }
+
               }
             }
           },

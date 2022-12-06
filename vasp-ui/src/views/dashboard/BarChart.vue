@@ -74,21 +74,21 @@ export default {
           }
         }],
         series: [{
-          name: 'pageA',
+          name: '乱搭乱建',
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
           data: [79, 52, 200, 334, 390, 330, 220],
           animationDuration
         }, {
-          name: 'pageB',
+          name: '乱堆乱放',
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
           data: [80, 52, 200, 334, 390, 330, 220],
           animationDuration
         }, {
-          name: 'pageC',
+          name: '乱涂乱画',
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
